@@ -2,14 +2,14 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
-const links = [
-  { to: '/admin', label: 'Dashboard' },
-  { to: '/admin/usuarios', label: 'Usuarios' },
-  { to: '/admin/turnos', label: 'Turnos' },
-  { to: '/admin/pagos', label: 'Pagos' },
-]
+export default function OperatorLayout() {
+  const links = [
+    { to: '/operador', label: 'Dashboard' },
+    { to: '/operador/ciudadanos', label: 'Ciudadanos' },
+    { to: '/operador/turnos', label: 'Turnos' },
+    { to: '/operador/tramites', label: 'Trámites' },
+  ]
 
-export default function AdminLayout() {
   const handleLogout = () => {
     logout()
     window.location.replace('/portal?tab=login')
@@ -20,8 +20,8 @@ export default function AdminLayout() {
       <header className="bg-white border-b sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold">Panel Administrativo</h1>
-            <p className="text-xs text-muted-foreground">Gestión centralizada del municipio</p>
+            <h1 className="text-xl font-bold">Portal Operador</h1>
+            <p className="text-xs text-muted-foreground">Operación diaria sin privilegios admin</p>
           </div>
           <Button variant="outline" onClick={handleLogout}>
             Cerrar sesión
@@ -36,7 +36,7 @@ export default function AdminLayout() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/admin'}
+                end={link.to === '/operador'}
                 className={({ isActive }) =>
                   `block rounded-lg px-3 py-2 text-sm transition ${
                     isActive

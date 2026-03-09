@@ -1,34 +1,25 @@
-// src/pages/admin/AdminTurnsPage.tsx
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
-export default function AdminTurnsPage() {
-  const navigate = useNavigate()
-
+export default function AdminPaymentsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 p-10">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-start justify-between gap-6 mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Gestión de Turnos</h1>
-            <p className="text-muted-foreground mt-1">
-              Agenda, cupos, estados, cancelaciones y auditoría.
-            </p>
-          </div>
-
-          <Button variant="outline" onClick={() => navigate('/admin')}>
-            Volver
-          </Button>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow">
-          <p className="font-medium">Módulo en construcción</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Próximo paso: definimos el modelo de turnos (servicio, dependencia, cupos, fecha/hora,
-            estado, observaciones) y endpoints admin/ciudadano.
+    <div className="bg-white rounded-xl border p-6">
+      <div className="flex items-start justify-between gap-6 mb-4">
+        <div>
+          <h2 className="text-2xl font-bold">Gestión de Pagos</h2>
+          <p className="text-sm text-muted-foreground">
+            Módulo en preparación. Estructura lista para integrar medios de pago y conciliación.
           </p>
         </div>
+        <Button variant="outline" disabled>
+          Próximamente
+        </Button>
       </div>
+
+      <ul className="list-disc pl-6 text-sm text-slate-700 space-y-1">
+        <li>Comprobantes y estados (pendiente/aprobado/rechazado)</li>
+        <li>Conciliación y reportes administrativos</li>
+        <li>Trazabilidad de operaciones</li>
+      </ul>
     </div>
   )
 }
