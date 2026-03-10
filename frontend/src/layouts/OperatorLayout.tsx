@@ -20,12 +20,17 @@ export default function OperatorLayout() {
       <header className="bg-white border-b sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold">Portal Operador</h1>
+            <h1 className="text-xl font-bold">Portal Operador / Moderador</h1>
             <p className="text-xs text-muted-foreground">Operación diaria sin privilegios admin</p>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Cerrar sesión
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.location.replace('/')}>
+              Inicio público
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              Cerrar sesión
+            </Button>
+          </div>
         </div>
       </header>
 

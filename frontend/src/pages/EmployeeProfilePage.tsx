@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { apiFetch } from '../services/api'
 
 type MeResponse = {
-  id: number
-  dni: string
+  dni?: string | null
   email: string
   role: string
   legajo?: string | null
@@ -24,6 +23,7 @@ export default function EmployeeProfilePage() {
       <h2 className="text-xl font-semibold mb-4">Perfil de empleado</h2>
       <p><strong>Email:</strong> {user.email}</p>
       <p><strong>Rol:</strong> {user.role}</p>
+      <p><strong>DNI:</strong> {user.dni ?? '—'}</p>
       <p><strong>Legajo:</strong> {user.legajo ?? '—'}</p>
       <p><strong>Activo:</strong> {user.isActive ? 'Sí' : 'No'}</p>
     </div>

@@ -10,6 +10,9 @@ export default function CitizenLayout() {
       links={[
         { to: '/ciudadano', label: 'Dashboard' },
         { to: '/ciudadano/perfil', label: 'Mi perfil' },
+        { to: '/ciudadano/turnos', label: 'Turnos' },
+        { to: '/ciudadano/pagos', label: 'Pagos' },
+        { to: '/ciudadano/tramites', label: 'Trámites' },
       ]}
     />
   )
@@ -37,9 +40,14 @@ function RoleLayout({
             <h1 className="text-xl font-bold">{title}</h1>
             <p className="text-xs text-muted-foreground">{subtitle}</p>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Cerrar sesión
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.location.replace('/')}>
+              Inicio público
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              Cerrar sesión
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -50,7 +58,7 @@ function RoleLayout({
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to.endsWith('/ciudadano')}
+                end={link.to === '/ciudadano'}
                 className={({ isActive }) =>
                   `block rounded-lg px-3 py-2 text-sm transition ${
                     isActive

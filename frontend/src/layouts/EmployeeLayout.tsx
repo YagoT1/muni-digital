@@ -23,9 +23,14 @@ export default function EmployeeLayout() {
             <h1 className="text-xl font-bold">Portal Empleado</h1>
             <p className="text-xs text-muted-foreground">Gestión interna por legajo</p>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Cerrar sesión
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.location.replace('/')}>
+              Inicio público
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              Cerrar sesión
+            </Button>
+          </div>
         </div>
       </header>
 

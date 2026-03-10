@@ -1,25 +1,49 @@
 import { Button } from '@/components/ui/button'
 
+const milestones = [
+  'Definir entidades: servicio, agenda, franja, cupo, estado',
+  'Implementar API admin para CRUD y asignación',
+  'Agregar tablero operativo con filtros por dependencia',
+]
+
 export default function AdminTurnsPage() {
   return (
-    <div className="bg-white rounded-xl border p-6">
-      <div className="flex items-start justify-between gap-6 mb-4">
+    <div className="bg-white rounded-xl border p-6 space-y-5">
+      <div className="flex items-start justify-between gap-6">
         <div>
           <h2 className="text-2xl font-bold">Gestión de Turnos</h2>
           <p className="text-sm text-muted-foreground">
-            Módulo en preparación. Se reservaron rutas y UX para mantener coherencia del panel.
+            Módulo estructurado para evolución incremental del circuito de turnos.
           </p>
         </div>
         <Button variant="outline" disabled>
-          Próximamente
+          Próxima iteración
         </Button>
       </div>
 
-      <ul className="list-disc pl-6 text-sm text-slate-700 space-y-1">
-        <li>Agenda por dependencia y servicio</li>
-        <li>Cupos, estados y reprogramaciones</li>
-        <li>Historial y auditoría de cambios</li>
-      </ul>
+      <div className="grid md:grid-cols-3 gap-4 text-sm">
+        <InfoCard title="Estado actual" value="Base operativa" />
+        <InfoCard title="Dependencias" value="Pendiente de catálogo" />
+        <InfoCard title="Integración" value="API + Portal ciudadano" />
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-2">Roadmap inmediato</h3>
+        <ul className="list-disc pl-6 text-sm text-slate-700 space-y-1">
+          {milestones.map((m) => (
+            <li key={m}>{m}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+function InfoCard({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="rounded-xl border p-4">
+      <p className="text-xs text-muted-foreground">{title}</p>
+      <p className="font-semibold mt-1">{value}</p>
     </div>
   )
 }

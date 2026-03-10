@@ -18,6 +18,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import PortalPage from './pages/PortalPage'
 import CitizenPortalPage from './pages/CitizenPortalPage'
 import CitizenProfilePage from './pages/CitizenProfilePage'
+import CitizenTurnsPage from './pages/CitizenTurnsPage'
+import CitizenPaymentsPage from './pages/CitizenPaymentsPage'
+import CitizenTramitesPage from './pages/CitizenTramitesPage'
 import EmployeeDashboardPage from './pages/EmployeeDashboardPage'
 import EmployeeProfilePage from './pages/EmployeeProfilePage'
 import OperatorDashboardPage from './pages/OperatorDashboardPage'
@@ -100,6 +103,9 @@ function App() {
         <Route path="/ciudadano" element={<CitizenLayout />}>
           <Route index element={<CitizenPortalPage />} />
           <Route path="perfil" element={<CitizenProfilePage />} />
+          <Route path="turnos" element={<CitizenTurnsPage />} />
+          <Route path="pagos" element={<CitizenPaymentsPage />} />
+          <Route path="tramites" element={<CitizenTramitesPage />} />
         </Route>
       </Route>
 
@@ -112,13 +118,14 @@ function App() {
         </Route>
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={['operador']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['operador', 'moderador']} />}>
         <Route path="/operador" element={<OperatorLayout />}>
           <Route index element={<OperatorDashboardPage />} />
           <Route path="ciudadanos" element={<OperatorCitizensPage />} />
           <Route path="turnos" element={<OperatorTurnsPage />} />
           <Route path="tramites" element={<OperatorTramitesPage />} />
         </Route>
+        <Route path="/moderador" element={<Navigate to="/operador" replace />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

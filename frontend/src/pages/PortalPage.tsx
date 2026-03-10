@@ -18,7 +18,7 @@ function routeByRole(role?: string | null) {
     case 'empleado':
       return '/empleado'
     case 'moderador':
-      return '/operador'
+      return '/moderador'
     default:
       return '/'
   }
