@@ -5,8 +5,11 @@ type AccessibilityState = {
   setReducedMotion: (v: boolean) => void
   highContrast: boolean
   setHighContrast: (v: boolean) => void
+  toggleHighContrast: () => void
   fontScale: number
   setFontScale: (v: number) => void
+  largeText: boolean
+  toggleLargeText: () => void
 }
 
 const AccessibilityContext = createContext<AccessibilityState | undefined>(
@@ -28,8 +31,11 @@ export function AccessibilityProvider({
       setReducedMotion,
       highContrast,
       setHighContrast,
+      toggleHighContrast: () => setHighContrast((prev) => !prev),
       fontScale,
       setFontScale,
+      largeText: fontScale > 1,
+      toggleLargeText: () => setFontScale((prev) => (prev > 1 ? 1 : 1.15)),
     }),
     [reducedMotion, highContrast, fontScale],
   )

@@ -1,45 +1,44 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login, register } from '../services/authService';
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { login, register } from '../services/authService'
 
-type Mode = 'login' | 'register';
+type Mode = 'login' | 'register'
 
 export default function AuthPortalPage() {
-  console.log('[AuthPortalPage] RENDER');
+  const navigate = useNavigate()
+  const [mode, setMode] = useState<Mode>('login')
 
-  const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>('login');
+  const [dni, setDni] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const [dni, setDni] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const title = useMemo(() => (mode === 'login' ? 'Ingresar' : 'Crear cuenta'), [mode]);
+  const title = useMemo(
+    () => (mode === 'login' ? 'Ingresar' : 'Crear cuenta'),
+    [mode],
+  )
 
   const handleSubmit = async () => {
-    console.log('[AuthPortalPage] CLICK submit', { mode, email, dni });
-
-    setError('');
-    setLoading(true);
+    setError('')
+    setLoading(true)
 
     try {
       if (mode === 'login') {
-        await login(email.trim(), password);
+        await login(email.trim(), password)
       } else {
-        await register(dni.trim(), email.trim(), password);
+        await register(dni.trim(), email.trim(), password)
       }
 
-      navigate('/ciudadano', { replace: true });
-    } catch (e: any) {
-      console.error('[AuthPortalPage] ERROR', e);
-      setError(e?.message || 'Error inesperado');
+      navigate('/ciudadano', { replace: true })
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Error inesperado'
+      setError(message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,17 +119,9 @@ export default function AuthPortalPage() {
             >
               {loading ? 'Procesando...' : mode === 'login' ? 'Ingresar' : 'Crear cuenta'}
             </button>
-
-            <button
-              type="button"
-              onClick={() => alert('CLICK OK')}
-              className="rounded-md border px-4 py-2 text-sm hover:bg-accent"
-            >
-              Probar click (QA)
-            </button>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,26 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { apiFetch } from '../../services/api'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
-type UserRole = 'admin' | 'operador' | 'ciudadano' | 'empleado' | 'moderador'
-
-type SafeUser = {
-  id: number
-  firstName: string | null
-  lastName: string | null
-  dni: string | null
-  email: string
-  role: UserRole
-  isActive: boolean
-  isVerified: boolean
-  country: string
-  province: string
-  city: string
-  createdAt: string
-  updatedAt: string
-}
+import {
+  listUsers,
+  resetUserPassword,
+  setUserActive,
+  setUserRole,
+} from '../../services/adminUsersService'
+import type { UserRole, UserSafe } from '../../services/adminUsersService'
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'admin', label: 'Admin' },
@@ -31,14 +19,28 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
 ]
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<SafeUser[]>([])
+  const [users, setUsers] = useState<UserSafe[]>([])
   const [loading, setLoading] = useState(true)
   const [busyId, setBusyId] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState('')
+  const [tempPassword, setTempPassword] = useState<string | null>(null)
 
-  // modal “simple” para mostrar temp password dev
-  const [tempPassword, setTempPassword] = useState<{ email: string; value: string } | null>(null)
+  const load = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      setUsers(await listUsers())
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo cargar la lista')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
@@ -49,239 +51,137 @@ export default function AdminUsersPage() {
         u.email.toLowerCase().includes(query) ||
         (u.dni ?? '').includes(query) ||
         full.includes(query) ||
-        u.role.toLowerCase().includes(query) ||
-        `${u.city ?? ''}`.toLowerCase().includes(query)
+        u.role.includes(query)
       )
     })
   }, [users, q])
 
-  const load = async () => {
+  const onToggleActive = async (u: UserSafe) => {
     try {
-      setError(null)
-      setLoading(true)
-      const data = await apiFetch<SafeUser[]>('/users')
-      setUsers(data)
-    } catch (e: any) {
-      setError(e?.message ?? 'No se pudo cargar la lista de usuarios')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  const updateRole = async (id: number, role: UserRole) => {
-    try {
-      setBusyId(id)
-      setError(null)
-      const updated = await apiFetch<SafeUser>(`/users/${id}/role`, {
-        method: 'PATCH',
-        body: JSON.stringify({ role }),
-      })
-      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
-    } catch (e: any) {
-      setError(e?.message ?? 'No se pudo actualizar el rol')
+      setBusyId(u.id)
+      await setUserActive(u.id, !u.isActive)
+      await load()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo actualizar estado')
     } finally {
       setBusyId(null)
     }
   }
 
-  const updateActive = async (id: number, isActive: boolean) => {
+  const onChangeRole = async (id: number, role: UserRole) => {
     try {
       setBusyId(id)
-      setError(null)
-      const updated = await apiFetch<SafeUser>(`/users/${id}/active`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isActive }),
-      })
-      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
-    } catch (e: any) {
-      setError(e?.message ?? 'No se pudo actualizar el estado')
+      await setUserRole(id, role)
+      await load()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo actualizar rol')
     } finally {
       setBusyId(null)
     }
   }
 
-  const resetPassword = async (id: number) => {
+  const onResetPassword = async (id: number) => {
     try {
       setBusyId(id)
-      setError(null)
-      const res = await apiFetch<{ ok: boolean; tempPassword: string }>(`/users/${id}/reset-password`, {
-        method: 'POST',
-      })
-      const u = users.find((x) => x.id === id)
-      if (res?.tempPassword && u) {
-        setTempPassword({ email: u.email, value: res.tempPassword })
-      }
-    } catch (e: any) {
-      setError(e?.message ?? 'No se pudo resetear la contraseña')
+      const res = await resetUserPassword(id)
+      const value =
+        typeof res === 'object' && res && 'tempPassword' in res
+          ? String((res as { tempPassword?: string }).tempPassword ?? '')
+          : ''
+      setTempPassword(value || 'Contraseña temporal no disponible')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo resetear password')
     } finally {
       setBusyId(null)
     }
   }
 
-  if (loading) return <div className="p-10">Cargando usuarios...</div>
+  if (loading) return <div className="p-6">Cargando usuarios...</div>
 
   return (
-    <div className="min-h-screen bg-slate-50 p-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-start justify-between gap-6 mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Gestión de Usuarios</h1>
-            <p className="text-muted-foreground mt-1">
-              Administración de roles, estado activo y reseteo de credenciales (DEV).
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={load}>
-              Refrescar
-            </Button>
-            <Button onClick={() => (window.location.href = '/admin')}>
-              Volver
-            </Button>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold">Gestión de Usuarios</h2>
+          <p className="text-sm text-muted-foreground">Listado, estado, rol y acciones administrativas.</p>
         </div>
-
-        {error && (
-          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <div className="bg-white rounded-xl shadow p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div className="md:col-span-2">
-              <Label htmlFor="q">Buscar</Label>
-              <Input
-                id="q"
-                placeholder="Email, DNI, nombre, rol, ciudad…"
-                className="rounded-xl"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">
-                Resultados: <span className="font-medium text-slate-900">{filtered.length}</span>
-              </p>
-            </div>
-          </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={load}>Refrescar</Button>
+          <Button asChild><Link to="/admin/usuarios/nuevo">Nuevo usuario</Link></Button>
         </div>
-
-        <div className="bg-white rounded-xl shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-slate-100">
-                <tr>
-                  <th className="text-left p-3">ID</th>
-                  <th className="text-left p-3">Usuario</th>
-                  <th className="text-left p-3">Email</th>
-                  <th className="text-left p-3">Documento</th>
-                  <th className="text-left p-3">Ubicación</th>
-                  <th className="text-left p-3">Rol</th>
-                  <th className="text-left p-3">Activo</th>
-                  <th className="text-left p-3">Acciones</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filtered.map((u) => {
-                  const name = `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || '—'
-                  const busy = busyId === u.id
-                  return (
-                    <tr key={u.id} className="border-t">
-                      <td className="p-3">{u.id}</td>
-                      <td className="p-3">{name}</td>
-                      <td className="p-3">{u.email}</td>
-                      <td className="p-3">{u.dni ?? '—'}</td>
-                      <td className="p-3">
-                        {u.city}, {u.province} ({u.country})
-                      </td>
-
-                      <td className="p-3">
-                        <select
-                          className="border rounded-lg px-2 py-1 bg-white"
-                          value={u.role}
-                          disabled={busy}
-                          onChange={(e) => updateRole(u.id, e.target.value as UserRole)}
-                        >
-                          {ROLE_OPTIONS.map((r) => (
-                            <option key={r.value} value={r.value}>
-                              {r.label}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-
-                      <td className="p-3">
-                        <Button
-                          variant={u.isActive ? 'outline' : 'default'}
-                          disabled={busy}
-                          onClick={() => updateActive(u.id, !u.isActive)}
-                        >
-                          {u.isActive ? 'Activo' : 'Inactivo'}
-                        </Button>
-                      </td>
-
-                      <td className="p-3">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            disabled={busy}
-                            onClick={() => resetPassword(u.id)}
-                          >
-                            Reset PW
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-
-                {filtered.length === 0 && (
-                  <tr className="border-t">
-                    <td className="p-6 text-center text-muted-foreground" colSpan={8}>
-                      Sin resultados.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {tempPassword && (
-          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <p className="font-semibold text-amber-900">Contraseña temporal (DEV)</p>
-            <p className="text-sm text-amber-900 mt-1">
-              Usuario: <strong>{tempPassword.email}</strong>
-            </p>
-            <div className="mt-3 flex items-center gap-3">
-              <code className="px-3 py-2 bg-white border rounded-lg">
-                {tempPassword.value}
-              </code>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(tempPassword.value)
-                }}
-              >
-                Copiar
-              </Button>
-              <Button onClick={() => setTempPassword(null)}>
-                Cerrar
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Recomendación: en producción esto debe ser un flujo de recuperación por email y auditoría.
-            </p>
-          </div>
-        )}
       </div>
+
+      {error && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-700 text-sm">{error}</div>}
+
+      <Input
+        placeholder="Buscar por email, DNI, nombre o rol"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+      />
+
+      <div className="bg-white rounded-xl border overflow-auto">
+        <table className="min-w-full text-sm">
+          <thead className="bg-slate-100">
+            <tr>
+              <th className="text-left p-3">ID</th>
+              <th className="text-left p-3">Nombre</th>
+              <th className="text-left p-3">Email</th>
+              <th className="text-left p-3">Rol</th>
+              <th className="text-left p-3">Estado</th>
+              <th className="text-left p-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((u) => {
+              const busy = busyId === u.id
+              const name = `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || '—'
+              return (
+                <tr key={u.id} className="border-t">
+                  <td className="p-3">{u.id}</td>
+                  <td className="p-3">{name}</td>
+                  <td className="p-3">{u.email}</td>
+                  <td className="p-3">
+                    <select
+                      value={u.role}
+                      disabled={busy}
+                      onChange={(e) => onChangeRole(u.id, e.target.value as UserRole)}
+                      className="border rounded px-2 py-1"
+                    >
+                      {ROLE_OPTIONS.map((r) => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="p-3">
+                    <Button size="sm" variant={u.isActive ? 'outline' : 'default'} onClick={() => onToggleActive(u)} disabled={busy}>
+                      {u.isActive ? 'Activo' : 'Inactivo'}
+                    </Button>
+                  </td>
+                  <td className="p-3">
+                    <div className="flex gap-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={`/admin/usuarios/${u.id}`}>Detalle</Link>
+                      </Button>
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={`/admin/usuarios/${u.id}/editar`}>Editar</Link>
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => onResetPassword(u.id)} disabled={busy}>
+                        Reset PW
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {tempPassword && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          Contraseña temporal (DEV): <code className="font-semibold">{tempPassword}</code>
+        </div>
+      )}
     </div>
   )
 }

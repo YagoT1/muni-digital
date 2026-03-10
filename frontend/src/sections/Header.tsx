@@ -12,25 +12,25 @@ import {
 } from '@/components/ui/navigation-menu'
 
 const navItems = [
-  { label: 'Inicio', href: '#inicio' },
+  { label: 'Inicio', href: '/' },
   {
     label: 'Pagos',
-    href: '#pagos',
+    href: '/deudas',
     children: [
-      { label: 'Consulta de Deuda', href: '#consulta-deuda' },
-      { label: 'Pago Online', href: '#pago-online' },
-      { label: 'Planes de Pago', href: '#planes-pago' },
-      { label: 'Factura Electrónica', href: '#factura-electronica' },
+      { label: 'Consulta de Deuda', href: '/deudas' },
+      { label: 'Pago Online', href: '/deudas' },
+      { label: 'Planes de Pago', href: '/deudas' },
+      { label: 'Factura Electrónica', href: '/deudas' },
     ],
   },
   {
     label: 'Trámites',
-    href: '#tramites',
+    href: '/tramites',
     children: [
-      { label: 'Guía de Trámites', href: '#guia-tramites' },
-      { label: 'Turnos Online', href: '#turnos' },
-      { label: 'Formularios', href: '#formularios' },
-      { label: 'Seguimiento', href: '#seguimiento' },
+      { label: 'Guía de Trámites', href: '/tramites' },
+      { label: 'Turnos Online', href: '/turnos' },
+      { label: 'Formularios', href: '/tramites' },
+      { label: 'Seguimiento', href: '/portal' },
     ],
   },
   {
@@ -43,9 +43,9 @@ const navItems = [
       { label: 'Ambiente', href: '#ambiente' },
     ],
   },
-  { label: 'Turismo', href: '#turismo' },
-  { label: 'Transparencia', href: '#transparencia' },
-  { label: 'Contacto', href: '#contacto' },
+  { label: 'Turismo', href: '/turismo' },
+  { label: 'Transparencia', href: '/transparencia' },
+  { label: 'Contacto', href: '/eventos' },
 ]
 
 const searchSuggestions = [
@@ -118,7 +118,7 @@ export function Header() {
       <div className="container-modern py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <a href="#inicio" className="flex items-center gap-3 group">
+          <a href="/" className="flex items-center gap-3 group">
             <div className="w-11 h-11 bg-gradient-to-br from-muni-500 to-muni-600 rounded-xl flex items-center justify-center text-white font-bold text-lg group-hover:shadow-soft-md transition-shadow">
               RP
             </div>
