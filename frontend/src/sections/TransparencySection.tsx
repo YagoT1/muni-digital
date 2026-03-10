@@ -8,7 +8,6 @@ import {
   ExternalLink,
   BarChart3
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 
 const transparencyData = [
@@ -19,7 +18,7 @@ const transparencyData = [
     description: 'Ejecutado del presupuesto anual',
     progress: 45,
     detail: '$1.250M / $2.800M',
-    link: '#presupuesto',
+    link: '/transparencia',
   },
   {
     icon: Building,
@@ -28,7 +27,7 @@ const transparencyData = [
     description: 'Proyectos activos actualmente',
     progress: 68,
     detail: '8 en ejecución, 4 en licitación',
-    link: '#obras',
+    link: '/transparencia',
   },
   {
     icon: Users,
@@ -37,7 +36,7 @@ const transparencyData = [
     description: 'Empleados en planta',
     progress: 100,
     detail: 'Ver organigrama completo',
-    link: '#personal',
+    link: '/transparencia',
   },
   {
     icon: FileText,
@@ -46,17 +45,17 @@ const transparencyData = [
     description: 'Ordenanzas y resoluciones',
     progress: 100,
     detail: 'Acceso al digesto completo',
-    link: '#normativas',
+    link: '/transparencia',
   },
 ]
 
 const openDataLinks = [
-  { label: 'Presupuesto y Ejecución', href: '#datos-presupuesto' },
-  { label: 'Contrataciones', href: '#datos-contrataciones' },
-  { label: 'Obras Públicas', href: '#datos-obras' },
-  { label: 'Personal y Salarios', href: '#datos-personal' },
-  { label: 'Estadísticas', href: '#datos-estadisticas' },
-  { label: 'API de Datos', href: '#api' },
+  { label: 'Presupuesto y Ejecución', href: '/transparencia' },
+  { label: 'Contrataciones', href: '/transparencia' },
+  { label: 'Obras Públicas', href: '/transparencia' },
+  { label: 'Personal y Salarios', href: '/transparencia' },
+  { label: 'Estadísticas', href: '/transparencia' },
+  { label: 'API de Datos', href: '/transparencia' },
 ]
 
 export function TransparencySection() {
@@ -121,14 +120,14 @@ export function TransparencySection() {
                 sobre presupuesto, obras, contrataciones y más en CSV, JSON o Excel.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button className="bg-white text-muni-700 hover:bg-white/90 gap-2">
+                <a href="/transparencia" className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-muni-700 hover:bg-white/90 gap-2">
                   <Download className="h-4 w-4" />
                   Descargar datos
-                </Button>
-                <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 gap-2">
+                </a>
+                <a href="/transparencia" className="inline-flex items-center rounded-md border border-white/30 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 gap-2">
                   <ExternalLink className="h-4 w-4" />
                   Ver API
-                </Button>
+                </a>
               </div>
             </div>
 

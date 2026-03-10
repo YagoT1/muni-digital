@@ -16,6 +16,15 @@ import { AlertBanner } from './components/AlertBanner'
 
 import ProtectedRoute from './components/ProtectedRoute'
 import PortalPage from './pages/PortalPage'
+import DebtsPage from './pages/DebtsPage'
+import OnlineAppointmentsPage from './pages/OnlineAppointmentsPage'
+import ClaimsPage from './pages/ClaimsPage'
+import ProceduresPage from './pages/ProceduresPage'
+import TransparencyPage from './pages/TransparencyPage'
+import TourismPage from './pages/TourismPage'
+import NewsPage from './pages/NewsPage'
+import NewsDetailPage from './pages/NewsDetailPage'
+import EventsPage from './pages/EventsPage'
 import CitizenPortalPage from './pages/CitizenPortalPage'
 import CitizenProfilePage from './pages/CitizenProfilePage'
 import CitizenTurnsPage from './pages/CitizenTurnsPage'
@@ -98,6 +107,15 @@ function App() {
       />
 
       <Route path="/portal" element={<PortalPage />} />
+      <Route path="/deudas" element={<DebtsPage />} />
+      <Route path="/turnos" element={<OnlineAppointmentsPage />} />
+      <Route path="/reclamos" element={<ClaimsPage />} />
+      <Route path="/tramites" element={<ProceduresPage />} />
+      <Route path="/transparencia" element={<TransparencyPage />} />
+      <Route path="/turismo" element={<TourismPage />} />
+      <Route path="/noticias" element={<NewsPage />} />
+      <Route path="/noticias/:id" element={<NewsDetailPage />} />
+      <Route path="/eventos" element={<EventsPage />} />
 
       <Route element={<ProtectedRoute allowedRoles={['ciudadano']} />}>
         <Route path="/ciudadano" element={<CitizenLayout />}>
