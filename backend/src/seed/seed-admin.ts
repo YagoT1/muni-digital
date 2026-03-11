@@ -1,7 +1,9 @@
-// src/seed/seed-admin.ts
 import * as bcrypt from 'bcrypt'
+import { Logger } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { User, UserRole } from '../users/user.entity'
+
+const logger = new Logger('SeedAdmin')
 
 export async function seedAdmin(dataSource: DataSource) {
   const email = process.env.ADMIN_EMAIL
@@ -11,13 +13,12 @@ export async function seedAdmin(dataSource: DataSource) {
   const lastName = process.env.ADMIN_LASTNAME ?? 'Sistema'
   const birthDate = process.env.ADMIN_BIRTHDATE ?? '1990-01-01'
 
-  // ✅ NUEVO: ubicación mínima obligatoria para cumplir NOT NULL
   const country = (process.env.ADMIN_COUNTRY ?? 'AR').trim()
   const province = (process.env.ADMIN_PROVINCE ?? 'Buenos Aires').trim()
   const city = (process.env.ADMIN_CITY ?? 'Roque Pérez').trim()
 
   if (!email || !password || !dni) {
-    console.log('[seedAdmin] ADMIN_EMAIL/ADMIN_PASSWORD/ADMIN_DNI no configurados. Skip.')
+    logger.log('ADMIN_EMAIL/ADMIN_PASSWORD/ADMIN_DNI no configurados. Skip.')
     return
   }
 
@@ -25,7 +26,7 @@ export async function seedAdmin(dataSource: DataSource) {
 
   const exists = await repo.findOne({ where: { email } })
   if (exists) {
-    console.log('[seedAdmin] Admin ya existe. Skip.')
+    logger.log('Admin ya existe. Skip.')
     return
   }
 
@@ -41,13 +42,11 @@ export async function seedAdmin(dataSource: DataSource) {
     role: UserRole.ADMIN,
     isActive: true,
     isVerified: true,
-
-    // ✅ OBLIGATORIOS
     country,
     province,
     city,
   })
 
   await repo.save(admin)
-  console.log('[seedAdmin] Admin creado:', email)
+  logger.log('Admin creado correctamente')
 }
