@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../services/api'
+import { logout, setToken } from '../services/authService'
 
-type Profile = { email: string; role: string; userId?: number; legajo?: string }
+type MeProfile = { email: string; role: string; id?: number; legajo?: string | null }
 
 export default function EmployeePortal() {
   const navigate = useNavigate()
@@ -16,22 +17,24 @@ export default function EmployeePortal() {
       const data = await apiFetch<{ access_token: string }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
+        skipAuth: true,
       })
 
-      localStorage.setItem('access_token', data.access_token)
+      setToken(data.access_token)
 
-      const p = await apiFetch<Profile>('/users/profile')
+      const me = await apiFetch<MeProfile>('/auth/me')
 
       const allowed = ['admin', 'operador', 'empleado', 'moderador']
-      if (!allowed.includes((p.role || '').toLowerCase())) {
-        localStorage.removeItem('access_token')
+      if (!allowed.includes((me.role || '').toLowerCase())) {
+        logout()
         setError('Acceso denegado: no pertenece al staff.')
         return
       }
 
       navigate('/empleados/dashboard')
-    } catch (e: any) {
-      setError(e?.message || 'Error')
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Error'
+      setError(message)
     }
   }
 
