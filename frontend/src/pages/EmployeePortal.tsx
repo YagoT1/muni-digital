@@ -5,6 +5,21 @@ import { logout, setToken } from '../services/authService'
 
 type MeProfile = { email: string; role: string; id?: number; legajo?: string | null }
 
+function routeByRole(role?: string | null) {
+  switch ((role ?? '').toLowerCase()) {
+    case 'admin':
+      return '/admin'
+    case 'operador':
+      return '/operador'
+    case 'moderador':
+      return '/moderador'
+    case 'empleado':
+      return '/empleado'
+    default:
+      return null
+  }
+}
+
 export default function EmployeePortal() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -24,14 +39,14 @@ export default function EmployeePortal() {
 
       const me = await apiFetch<MeProfile>('/auth/me')
 
-      const allowed = ['admin', 'operador', 'empleado', 'moderador']
-      if (!allowed.includes((me.role || '').toLowerCase())) {
+      const destination = routeByRole(me.role)
+      if (!destination) {
         logout()
         setError('Acceso denegado: no pertenece al staff.')
         return
       }
 
-      navigate('/empleados/dashboard')
+      navigate(destination)
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Error'
       setError(message)
