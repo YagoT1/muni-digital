@@ -24,7 +24,7 @@ export default function AdminUsersPage() {
   const [busyId, setBusyId] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState('')
-  const [tempPassword, setTempPassword] = useState<string | null>(null)
+  const [resetMessage, setResetMessage] = useState<string | null>(null)
 
   const load = async () => {
     try {
@@ -83,12 +83,10 @@ export default function AdminUsersPage() {
   const onResetPassword = async (id: number) => {
     try {
       setBusyId(id)
-      const res = await resetUserPassword(id)
-      const value =
-        typeof res === 'object' && res && 'tempPassword' in res
-          ? String((res as { tempPassword?: string }).tempPassword ?? '')
-          : ''
-      setTempPassword(value || 'Contraseña temporal no disponible')
+      const input = window.prompt('Ingresá la nueva contraseña (mínimo 8 caracteres, incluir letras y números):')
+      if (!input) return
+      const res = await resetUserPassword(id, input)
+      setResetMessage(res.message)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo resetear password')
     } finally {
@@ -177,9 +175,9 @@ export default function AdminUsersPage() {
         </table>
       </div>
 
-      {tempPassword && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-          Contraseña temporal (DEV): <code className="font-semibold">{tempPassword}</code>
+      {resetMessage && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          {resetMessage}
         </div>
       )}
     </div>
