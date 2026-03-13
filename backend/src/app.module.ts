@@ -29,9 +29,16 @@ function validateEnv(env: EnvVars) {
   }
 
   if (isProd) {
-    const requiredProd = ['NODE_ENV', 'DATABASE_URL', 'CORS_ORIGINS'] as const
+    const requiredProd = ['NODE_ENV', 'CORS_ORIGINS'] as const
     for (const key of requiredProd) {
       if (!env[key]) throw new Error(`${key} is required in production`)
+    }
+
+    const hasDatabaseUrl = Boolean(env.DATABASE_URL)
+    const hasDiscreteDbConfig = Boolean(env.DB_HOST && env.DB_PORT && env.DB_USER && env.DB_PASS && env.DB_NAME)
+
+    if (!hasDatabaseUrl && !hasDiscreteDbConfig) {
+      throw new Error('DATABASE_URL or DB_HOST/DB_PORT/DB_USER/DB_PASS/DB_NAME is required in production')
     }
   }
 

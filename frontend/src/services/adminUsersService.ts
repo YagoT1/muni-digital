@@ -44,6 +44,7 @@ export type UserFormPayload = {
   province: string
   city: string
   phone?: string
+  legajo?: string
   role?: UserRole
   isActive?: boolean
   isVerified?: boolean
@@ -79,14 +80,14 @@ export async function updateUser(
 }
 
 export async function setUserRole(id: number, role: UserRole): Promise<void> {
-  await apiFetch(`/users/${id}/role`, {
+  await apiFetch<void>(`/users/${id}/role`, {
     method: 'PATCH',
     body: JSON.stringify({ role }),
   })
 }
 
 export async function setUserActive(id: number, isActive: boolean): Promise<void> {
-  await apiFetch(`/users/${id}/active`, {
+  await apiFetch<void>(`/users/${id}/active`, {
     method: 'PATCH',
     body: JSON.stringify({ isActive }),
   })
