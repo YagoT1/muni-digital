@@ -242,6 +242,10 @@ export class UsersService {
 
   async setRole(userId: number, role: UserRole) {
     const user = await this.findById(userId)
+
+    if (role === UserRole.EMPLEADO && !this.normalizeText(user.legajo)) {
+      throw new BadRequestException('Legajo is required for empleado role')
+    }
     user.role = role
     const saved = await this.usersRepo.save(user)
     return this.toSafe(saved)
@@ -254,27 +258,32 @@ export class UsersService {
     return this.toSafe(saved)
   }
 
-  async resetPassword(userId: number) {
+  async resetPassword(userId: number, newPassword: string) {
     const user = await this.findById(userId)
-    const tempPassword = this.generateTempPassword(12)
-    user.password = await bcrypt.hash(tempPassword, 10)
+    const trimmedPassword = (newPassword ?? '').trim()
+    this.assertPasswordPolicy(trimmedPassword)
 
+    user.password = await bcrypt.hash(trimmedPassword, 10)
     await this.usersRepo.save(user)
 
     return {
       ok: true,
-      tempPassword,
+      message: 'Password updated successfully',
     }
   }
 
-  private generateTempPassword(length = 12) {
-    const chars =
-      'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*?'
-    let out = ''
-    for (let i = 0; i < length; i++) {
-      out += chars[Math.floor(Math.random() * chars.length)]
+  private assertPasswordPolicy(password: string) {
+    if (password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters long')
     }
-    if (out.length < 8) throw new BadRequestException('Temp password too short')
-    return out
+
+    const hasLetter = /[A-Za-z]/.test(password)
+    const hasNumber = /\d/.test(password)
+
+    if (!hasLetter || !hasNumber) {
+      throw new BadRequestException(
+        'Password must contain at least one letter and one number',
+      )
+    }
   }
 }
