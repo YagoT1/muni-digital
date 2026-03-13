@@ -17,9 +17,9 @@ import { useAccessibility } from '@/context/AccessibilityContext'
 
 const footerLinks = {
   servicios: [
-    { label: 'Pagos y Deudas', href: '#pagos' },
-    { label: 'Guía de Trámites', href: '#tramites' },
-    { label: 'Turnos Online', href: '#turnos' },
+    { label: 'Pagos y Deudas', href: '/deudas' },
+    { label: 'Guía de Trámites', href: '/tramites' },
+    { label: 'Turnos Online', href: '/turnos' },
     { label: 'Salud', href: '#salud' },
     { label: 'Educación', href: '#educacion' },
     { label: 'Obras', href: '#obras' },
@@ -27,14 +27,14 @@ const footerLinks = {
   municipalidad: [
     { label: 'Autoridades', href: '#autoridades' },
     { label: 'Organigrama', href: '#organigrama' },
-    { label: 'Transparencia', href: '#transparencia' },
+    { label: 'Transparencia', href: '/transparencia' },
     { label: 'Datos Abiertos', href: '#datos-abiertos' },
     { label: 'Normativas', href: '#normativas' },
     { label: 'Licitaciones', href: '#licitaciones' },
   ],
   comunidad: [
-    { label: 'Turismo', href: '#turismo' },
-    { label: 'Agenda Cultural', href: '#agenda' },
+    { label: 'Turismo', href: '/turismo' },
+    { label: 'Agenda Cultural', href: '/eventos' },
     { label: 'Deportes', href: '#deportes' },
     { label: 'Participación', href: '#participacion' },
     { label: 'Voluntariado', href: '#voluntariado' },

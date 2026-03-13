@@ -13,7 +13,7 @@ const services = [
     icon: Hospital,
     title: 'Salud',
     description: 'Centros de salud, vacunación y programas de bienestar para todos los vecinos.',
-    href: '#salud',
+    href: '/tramites',
     color: 'bg-rose-50 text-rose-600',
     gradient: 'from-rose-500 to-rose-600',
   },
@@ -21,7 +21,7 @@ const services = [
     icon: GraduationCap,
     title: 'Educación',
     description: 'Escuelas municipales, bibliotecas, becas y programas educativos.',
-    href: '#educacion',
+    href: '/tramites',
     color: 'bg-blue-50 text-blue-600',
     gradient: 'from-blue-500 to-blue-600',
   },
@@ -29,7 +29,7 @@ const services = [
     icon: HardHat,
     title: 'Obras',
     description: 'Obras públicas, pavimentación, iluminación y mantenimiento urbano.',
-    href: '#obras',
+    href: '/tramites',
     color: 'bg-amber-50 text-amber-600',
     gradient: 'from-amber-500 to-amber-600',
   },
@@ -37,7 +37,7 @@ const services = [
     icon: Recycle,
     title: 'Ambiente',
     description: 'Recolección de residuos, reciclaje, espacios verdes y cuidado ambiental.',
-    href: '#ambiente',
+    href: '/tramites',
     color: 'bg-emerald-50 text-emerald-600',
     gradient: 'from-emerald-500 to-emerald-600',
   },
@@ -45,7 +45,7 @@ const services = [
     icon: Palette,
     title: 'Cultura',
     description: 'Eventos culturales, talleres, bibliotecas y patrimonio histórico.',
-    href: '#cultura',
+    href: '/tramites',
     color: 'bg-violet-50 text-violet-600',
     gradient: 'from-violet-500 to-violet-600',
   },
@@ -53,7 +53,7 @@ const services = [
     icon: Building2,
     title: 'Desarrollo',
     description: 'Habilitaciones comerciales, empleo y fomento productivo local.',
-    href: '#desarrollo',
+    href: '/tramites',
     color: 'bg-cyan-50 text-cyan-600',
     gradient: 'from-cyan-500 to-cyan-600',
   },
@@ -112,7 +112,7 @@ export function QuickServices() {
         {/* CTA */}
         <div className="mt-12 text-center">
           <a
-            href="#todos-los-servicios"
+            href="/tramites"
             className="inline-flex items-center gap-2 text-muni-600 hover:text-muni-700 font-medium transition-colors"
           >
             Ver todos los servicios

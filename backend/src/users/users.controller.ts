@@ -16,6 +16,9 @@ import { UserRole } from './user.entity'
 import { UsersService } from './users.service'
 import { UpdateRoleDto } from './dto/update-role.dto'
 import { UpdateActiveDto } from './dto/update-active.dto'
+import { UpdateAdminUserDto } from './dto/update-admin-user.dto'
+import { CreateAdminUserDto } from './dto/create-admin-user.dto'
+import { ResetPasswordDto } from './dto/reset-password.dto'
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,10 +31,28 @@ export class UsersController {
     return this.usersService.findAllSafe()
   }
 
+  @Get('stats')
+  async stats() {
+    return this.usersService.getAdminStats()
+  }
+
   @Get(':id')
   async getOne(@Param('id', ParseIntPipe) id: number) {
     const user = await this.usersService.findById(id)
     return this.usersService.toSafe(user)
+  }
+
+  @Post()
+  async create(@Body() dto: CreateAdminUserDto) {
+    return this.usersService.createByAdmin(dto)
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateAdminUserDto,
+  ) {
+    return this.usersService.updateByAdmin(id, dto)
   }
 
   @Patch(':id/role')
@@ -51,7 +72,10 @@ export class UsersController {
   }
 
   @Post(':id/reset-password')
-  async resetPassword(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.resetPassword(id)
+  async resetPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ResetPasswordDto,
+  ) {
+    return this.usersService.resetPassword(id, dto.newPassword)
   }
 }
