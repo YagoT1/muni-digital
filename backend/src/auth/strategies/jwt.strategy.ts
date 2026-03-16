@@ -15,7 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!secret) throw new Error('JWT_SECRET is not set')
 
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        cookieExtractor,
+      ]),
       ignoreExpiration: false,
       secretOrKey: secret,
     })

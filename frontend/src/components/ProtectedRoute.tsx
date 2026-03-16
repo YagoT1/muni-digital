@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { apiFetch, TOKEN_KEY } from '../services/api'
+import { apiFetch } from '../services/api'
+import type { AuthUser } from '../types/auth'
 
 interface ProtectedRouteProps {
   allowedRoles?: string[]
@@ -8,15 +9,14 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
 
   useEffect(() => {
     const validate = async () => {
       try {
-        const data = await apiFetch('/auth/me')
+        const data = await apiFetch<AuthUser>('/auth/me')
         setUser(data)
       } catch {
-        localStorage.removeItem(TOKEN_KEY)
         setUser(null)
       } finally {
         setLoading(false)
@@ -30,7 +30,7 @@ export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 
   if (!user) return <Navigate to="/portal?tab=login" replace />
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && (!user.role || !allowedRoles.includes(user.role))) {
     return <Navigate to="/" replace />
   }
 

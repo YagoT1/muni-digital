@@ -1,5 +1,5 @@
-// src/services/adminUsersService.ts
 import { apiFetch } from './api'
+import type { PaginatedResponse } from '../types/api'
 
 export type UserRole =
   | 'admin'
@@ -50,7 +50,41 @@ export type UserFormPayload = {
   isVerified?: boolean
 }
 
-export async function listUsers(): Promise<UserSafe[]> {
+export type AdminStats = {
+  total: number
+  active: number
+  inactive: number
+  byRole: Record<string, number>
+}
+
+export type UserFormPayload = {
+  firstName?: string
+  lastName?: string
+  dni?: string
+  birthDate?: string
+  email: string
+  password?: string
+  country: string
+  province: string
+  city: string
+  phone?: string
+  legajo?: string
+  role?: UserRole
+  isActive?: boolean
+  isVerified?: boolean
+}
+
+export async function listUsers(params?: {
+  page?: number
+  limit?: number
+}): Promise<UserSafe[] | PaginatedResponse<UserSafe>> {
+  if (params?.page || params?.limit) {
+    const q = new URLSearchParams()
+    if (params.page) q.set('page', String(params.page))
+    if (params.limit) q.set('limit', String(params.limit))
+    return apiFetch<PaginatedResponse<UserSafe>>(`/users?${q.toString()}`)
+  }
+
   return apiFetch<UserSafe[]>('/users')
 }
 

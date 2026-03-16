@@ -1,4 +1,3 @@
-// src/users/users.service.ts
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -12,26 +11,26 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
+    private readonly createUserService: CreateUserService,
+    private readonly updateUserService: UpdateUserService,
+    private readonly resetPasswordService: ResetPasswordService,
+    private readonly userStatsService: UserStatsService,
   ) {}
 
   normalizeEmail(email: string): string {
-    return (email ?? '').trim().toLowerCase()
+    return normalizeEmail(email)
   }
 
   normalizeText(value?: string | null): string | undefined {
-    if (value === null || value === undefined) return undefined
-    const v = String(value).trim()
-    return v.length ? v : undefined
+    return normalizeText(value)
   }
 
   normalizeDocumentNumber(value: string): string {
-    return (value ?? '').replace(/\D/g, '').trim()
+    return normalizeDocumentNumber(value)
   }
 
   normalizeCuil(value?: string | null): string | undefined {
-    if (!value) return undefined
-    const onlyDigits = value.replace(/\D/g, '').trim()
-    return onlyDigits.length ? onlyDigits : undefined
+    return normalizeCuil(value)
   }
 
   async create(data: Partial<User>) {

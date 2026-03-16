@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Query,
   ParseIntPipe,
   Patch,
   Post,
@@ -27,7 +28,17 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async list() {
+  async list(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    if (page || limit) {
+      return this.usersService.findPaginatedSafe(
+        Number(page ?? '1'),
+        Number(limit ?? '20'),
+      )
+    }
+
     return this.usersService.findAllSafe()
   }
 

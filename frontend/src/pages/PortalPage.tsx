@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { login, register, getRoleFromToken, getToken } from '../services/authService'
+import { login, register } from '../services/authService'
 import { apiFetch } from '../services/api'
 
 function routeByRole(role?: string | null) {
@@ -70,11 +70,6 @@ export default function PortalPage() {
   }
 
   const postAuthRedirect = async () => {
-    const token = getToken()
-    const role = getRoleFromToken(token)
-    const fastRoute = routeByRole(role)
-    navigate(fastRoute, { replace: true })
-
     try {
       const me = await apiFetch<{ role?: string }>('/auth/me')
       const finalRoute = routeByRole(me?.role)

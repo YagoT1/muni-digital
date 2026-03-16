@@ -1,11 +1,12 @@
+import type { ApiErrorPayload } from '../types/api'
+
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-export const TOKEN_KEY = 'md_access_token'
 
 type ApiFetchOptions = RequestInit & {
   skipAuth?: boolean
 }
 
-export async function apiFetch<T = any>(
+export async function apiFetch<T = unknown>(
   path: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
@@ -16,12 +17,11 @@ export async function apiFetch<T = any>(
     headers.set('Content-Type', 'application/json')
   }
 
-  if (!options.skipAuth) {
-    const token = localStorage.getItem(TOKEN_KEY)
-    if (token) headers.set('Authorization', `Bearer ${token}`)
-  }
-
-  const res = await fetch(url, { ...options, headers })
+  const res = await fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include',
+  })
 
   const contentType = res.headers.get('content-type') || ''
   const isJson = contentType.includes('application/json')
@@ -30,11 +30,14 @@ export async function apiFetch<T = any>(
     : await res.text().catch(() => null)
 
   if (!res.ok) {
+    const payload = body as ApiErrorPayload | string | null
     const msg =
-      (body && (body.message || body.error)) ||
-      (typeof body === 'string' && body) ||
+      (payload && typeof payload !== 'string' && payload.message) ||
+      (payload && typeof payload !== 'string' && payload.error) ||
+      (typeof payload === 'string' && payload) ||
       `Request failed (${res.status})`
-    throw new Error(msg)
+
+    throw new Error(Array.isArray(msg) ? msg.join(', ') : msg)
   }
 
   return body as T
