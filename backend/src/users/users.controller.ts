@@ -18,6 +18,7 @@ import { UpdateRoleDto } from './dto/update-role.dto'
 import { UpdateActiveDto } from './dto/update-active.dto'
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto'
 import { CreateAdminUserDto } from './dto/create-admin-user.dto'
+import { ResetPasswordDto } from './dto/reset-password.dto'
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -71,7 +72,10 @@ export class UsersController {
   }
 
   @Post(':id/reset-password')
-  async resetPassword(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.resetPassword(id)
+  async resetPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ResetPasswordDto,
+  ) {
+    return this.usersService.resetPassword(id, dto.newPassword)
   }
 }

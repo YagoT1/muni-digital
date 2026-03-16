@@ -44,6 +44,7 @@ export type UserFormPayload = {
   province: string
   city: string
   phone?: string
+  legajo?: string
   role?: UserRole
   isActive?: boolean
   isVerified?: boolean
@@ -79,14 +80,14 @@ export async function updateUser(
 }
 
 export async function setUserRole(id: number, role: UserRole): Promise<void> {
-  await apiFetch(`/users/${id}/role`, {
+  await apiFetch<void>(`/users/${id}/role`, {
     method: 'PATCH',
     body: JSON.stringify({ role }),
   })
 }
 
 export async function setUserActive(id: number, isActive: boolean): Promise<void> {
-  await apiFetch(`/users/${id}/active`, {
+  await apiFetch<void>(`/users/${id}/active`, {
     method: 'PATCH',
     body: JSON.stringify({ isActive }),
   })
@@ -94,11 +95,10 @@ export async function setUserActive(id: number, isActive: boolean): Promise<void
 
 export async function resetUserPassword(
   id: number,
-): Promise<{ tempPassword?: string; message?: string } | unknown> {
-  return apiFetch<{ tempPassword?: string; message?: string } | unknown>(
-    `/users/${id}/reset-password`,
-    {
-      method: 'POST',
-    },
-  )
+  newPassword: string,
+): Promise<{ ok: boolean; message: string }> {
+  return apiFetch<{ ok: boolean; message: string }>(`/users/${id}/reset-password`, {
+    method: 'POST',
+    body: JSON.stringify({ newPassword }),
+  })
 }
