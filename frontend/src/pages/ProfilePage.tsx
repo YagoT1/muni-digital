@@ -1,14 +1,26 @@
 import { useEffect, useState } from 'react'
 import { apiFetch } from '../services/api'
 
+type Profile = {
+  id: number
+  email: string
+  role: string
+  dni?: string | null
+  legajo?: string | null
+  isActive?: boolean
+}
+
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<Profile | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    apiFetch('/users/profile')
+    apiFetch<Profile>('/auth/me')
       .then(setUser)
-      .catch((e: any) => setError(e?.message || 'Error'))
+      .catch((e: unknown) => {
+        const message = e instanceof Error ? e.message : 'Error'
+        setError(message)
+      })
   }, [])
 
   return (

@@ -1,5 +1,4 @@
-// src/services/authService.ts
-import { apiFetch, TOKEN_KEY } from './api'
+import { apiFetch } from './api'
 
 type JwtPayload = {
   sub?: number
@@ -9,75 +8,84 @@ type JwtPayload = {
   iat?: number
 }
 
-function base64UrlDecode(input: string) {
-  const base64 = input.replace(/-/g, '+').replace(/_/g, '/')
-  const pad = base64.length % 4
-  const padded = pad ? base64 + '='.repeat(4 - pad) : base64
-
-  return decodeURIComponent(
-    atob(padded)
-      .split('')
-      .map((c) => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`)
-      .join(''),
-  )
+export type RegisterPayload = {
+  firstName?: string
+  lastName?: string
+  dni?: string
+  birthDate?: string
+  email: string
+  password: string
+  country?: string
+  province?: string
+  city?: string
+  legajo?: string
 }
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
+  return null
 }
 
-export function setToken(token: string) {
-  // Importante: token debe ser string "eyJ..."
-  localStorage.setItem(TOKEN_KEY, token)
+export function setToken(_token: string) {
+  // No-op: authentication now relies on HttpOnly cookie set by backend.
 }
 
-export function logout() {
-  localStorage.removeItem(TOKEN_KEY)
+export async function logout() {
+  await apiFetch('/auth/logout', { method: 'POST' })
 }
 
-export function decodeToken(token: string): JwtPayload | null {
-  try {
-    const [, payload] = token.split('.')
-    if (!payload) return null
-    return JSON.parse(base64UrlDecode(payload))
-  } catch {
-    return null
-  }
+export function decodeToken(_token: string): JwtPayload | null {
+  return null
 }
 
-export function isTokenValid(token: string | null): boolean {
-  if (!token) return false
-  const payload = decodeToken(token)
-  if (!payload?.exp) return true
-  const now = Math.floor(Date.now() / 1000)
-  return payload.exp > now
+export function isTokenValid(_token: string | null): boolean {
+  return false
 }
 
-export function getRoleFromToken(token: string | null): string | null {
-  if (!token) return null
-  const payload = decodeToken(token)
-  return payload?.role ?? null
+export function getRoleFromToken(_token: string | null): string | null {
+  return null
 }
 
 export async function login(email: string, password: string) {
-  const data = await apiFetch<{ access_token: string }>('/auth/login', {
+  return apiFetch<{ access_token: string }>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
     skipAuth: true,
   })
-
-  setToken(data.access_token)
-  return data
 }
 
-export async function register(payload: any) {
-  // payload debería incluir TODO lo que tu backend exige
-  const data = await apiFetch<{ access_token: string }>('/auth/register', {
+function toRegisterPayload(
+  payloadOrDni: RegisterPayload | string,
+  email?: string,
+  password?: string,
+  legajo?: string,
+): RegisterPayload {
+  if (typeof payloadOrDni !== 'string') return payloadOrDni
+
+  return {
+    dni: payloadOrDni.trim(),
+    email: (email ?? '').trim(),
+    password: password ?? '',
+    legajo,
+    firstName: 'Usuario',
+    lastName: 'Portal',
+    birthDate: '1990-01-01',
+    country: 'AR',
+    province: 'Buenos Aires',
+    city: 'Roque Pérez',
+  }
+}
+
+export async function register(
+  payloadOrDni: RegisterPayload | string,
+  email?: string,
+  password?: string,
+  legajo?: string,
+) {
+  const payload = toRegisterPayload(payloadOrDni, email, password, legajo)
+
+  return apiFetch<{ access_token: string }>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
     skipAuth: true,
   })
-
-  setToken(data.access_token)
-  return data
 }

@@ -66,7 +66,7 @@ export function NewsSection() {
             </h2>
           </div>
           <a
-            href="#todas-las-noticias"
+            href="/noticias"
             className="inline-flex items-center gap-2 text-muni-600 hover:text-muni-700 font-medium transition-colors"
           >
             Ver todas
@@ -79,7 +79,7 @@ export function NewsSection() {
           {/* Featured News */}
           {featuredNews && (
             <a
-              href={`#noticia-${featuredNews.id}`}
+              href={`/noticias/${featuredNews.id}`}
               className="group relative overflow-hidden rounded-2xl bg-slate-50 hover:bg-slate-100 transition-all duration-300"
             >
               {/* Image placeholder */}
@@ -127,7 +127,7 @@ export function NewsSection() {
             {otherNews.map((item) => (
               <a
                 key={item.id}
-                href={`#noticia-${item.id}`}
+                href={`/noticias/${item.id}`}
                 className="group flex gap-4 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all duration-300"
               >
                 {/* Thumbnail */}

@@ -1,43 +1,47 @@
-// src/users/users.service.ts
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User, UserRole } from './user.entity'
-import * as bcrypt from 'bcrypt'
+import { CreateAdminUserDto } from './dto/create-admin-user.dto'
+import { UpdateAdminUserDto } from './dto/update-admin-user.dto'
+import { CreateUserService } from './use-cases/create-user.service'
+import { UpdateUserService } from './use-cases/update-user.service'
+import { ResetPasswordService } from './use-cases/reset-password.service'
+import { UserStatsService } from './use-cases/user-stats.service'
+import {
+  normalizeCuil,
+  normalizeDocumentNumber,
+  normalizeEmail,
+  normalizeText,
+} from './users.utils'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
+    private readonly createUserService: CreateUserService,
+    private readonly updateUserService: UpdateUserService,
+    private readonly resetPasswordService: ResetPasswordService,
+    private readonly userStatsService: UserStatsService,
   ) {}
 
-  // -----------------------------
-  // Normalización (escala / calidad de datos)
-  // -----------------------------
   normalizeEmail(email: string): string {
-    return (email ?? '').trim().toLowerCase()
+    return normalizeEmail(email)
   }
 
   normalizeText(value?: string | null): string | undefined {
-    if (value === null || value === undefined) return undefined
-    const v = String(value).trim()
-    return v.length ? v : undefined
+    return normalizeText(value)
   }
 
   normalizeDocumentNumber(value: string): string {
-    return (value ?? '').replace(/\D/g, '').trim()
+    return normalizeDocumentNumber(value)
   }
 
   normalizeCuil(value?: string | null): string | undefined {
-    if (!value) return undefined
-    const onlyDigits = value.replace(/\D/g, '').trim()
-    return onlyDigits.length ? onlyDigits : undefined
+    return normalizeCuil(value)
   }
 
-  // -----------------------------
-  // CRUD base
-  // -----------------------------
   async create(data: Partial<User>) {
     const user = this.usersRepo.create(data)
     return this.usersRepo.save(user)
@@ -53,27 +57,11 @@ export class UsersService {
     return this.usersRepo.find()
   }
 
-  // -----------------------------
-  // SAFE: sin password
-  // -----------------------------
-  toSafePublic(user: User) {
-    const { password, ...safe } = user as any
-    return safe
-  }
-
-  toSafePrivate(user: User) {
-    const { password, ...safe } = user as any
-    return safe
-  }
-
   toSafe(user: User) {
-    // Punto único para exponer la versión "segura" del usuario
-    return this.toSafePrivate(user)
+    const { password, ...safe } = user as User & { password?: string }
+    return safe
   }
 
-  // -----------------------------
-  // Búsquedas específicas
-  // -----------------------------
   async findByEmail(email: string) {
     const normalized = this.normalizeEmail(email)
     return this.usersRepo.findOne({ where: { email: normalized } })
@@ -94,31 +82,54 @@ export class UsersService {
     return this.usersRepo.findOne({ where: { dni: documentNumber } })
   }
 
-  // Alias para AuthService enterprise
-  async findByDocumentNumber(documentNumber: string) {
-    // si en el futuro querés diferenciar, acá lo ajustás
-    return this.usersRepo.findOne({ where: { documentNumber } })
-  }
-
   async findByCuil(cuil?: string) {
     const normalized = this.normalizeCuil(cuil)
     if (!normalized) return null
     return this.usersRepo.findOne({ where: { cuil: normalized } })
   }
 
-  // -----------------------------
-  // Admin Ops
-  // -----------------------------
   async findAllSafe() {
     const users = await this.findAll()
     return users.map((user) => this.toSafe(user))
   }
 
+  async findPaginatedSafe(page = 1, limit = 20) {
+    const normalizedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1
+    const normalizedLimit = Math.min(100, Math.max(1, Math.floor(limit || 20)))
+
+    const [items, total] = await this.usersRepo.findAndCount({
+      skip: (normalizedPage - 1) * normalizedLimit,
+      take: normalizedLimit,
+      order: { id: 'DESC' },
+    })
+
+    return {
+      items: items.map((u) => this.toSafe(u)),
+      total,
+      page: normalizedPage,
+      totalPages: Math.max(1, Math.ceil(total / normalizedLimit)),
+    }
+  }
+
+  async getAdminStats() {
+    return this.userStatsService.execute()
+  }
+
+  async createByAdmin(dto: CreateAdminUserDto) {
+    return this.createUserService.execute(dto)
+  }
+
+  async updateByAdmin(userId: number, dto: UpdateAdminUserDto) {
+    return this.updateUserService.execute(userId, dto)
+  }
+
   async setRole(userId: number, role: UserRole) {
     const user = await this.findById(userId)
 
-    // Regla empresarial mínima: no permitir degradar el único admin (opcional)
-    // Si querés, lo activamos después. Por ahora, directo.
+    if (role === UserRole.EMPLEADO && !this.normalizeText(user.legajo)) {
+      throw new BadRequestException('Legajo is required for empleado role')
+    }
+
     user.role = role
     const saved = await this.usersRepo.save(user)
     return this.toSafe(saved)
@@ -131,30 +142,7 @@ export class UsersService {
     return this.toSafe(saved)
   }
 
-  async resetPassword(userId: number) {
-    const user = await this.findById(userId)
-
-    // Password temporal (solo DEV/QA). En PROD: flujo por email.
-    const tempPassword = this.generateTempPassword(12)
-    user.password = await bcrypt.hash(tempPassword, 10)
-
-    await this.usersRepo.save(user)
-
-    return {
-      ok: true,
-      tempPassword, // si no querés devolverla, la quitamos y logueamos por consola (no recomendado).
-    }
-  }
-
-  private generateTempPassword(length = 12) {
-    const chars =
-      'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*?'
-    let out = ''
-    for (let i = 0; i < length; i++) {
-      out += chars[Math.floor(Math.random() * chars.length)]
-    }
-    // hardening mínimo
-    if (out.length < 8) throw new BadRequestException('Temp password too short')
-    return out
+  async resetPassword(userId: number, newPassword: string) {
+    return this.resetPasswordService.execute(userId, newPassword)
   }
 }

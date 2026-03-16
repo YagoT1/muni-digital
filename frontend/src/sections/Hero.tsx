@@ -5,28 +5,28 @@ const quickActions = [
     icon: CreditCard,
     label: 'Pagar Deudas',
     description: 'Consultá y pagá tus tasas',
-    href: '#pagos',
+    href: '/deudas',
     color: 'from-emerald-500 to-emerald-600',
   },
   {
     icon: Calendar,
     label: 'Turnos Online',
     description: 'Reservá tu turno',
-    href: '#turnos',
+    href: '/turnos',
     color: 'from-muni-500 to-muni-600',
   },
   {
     icon: MessageSquare,
     label: 'Reclamos',
     description: 'Hacé tu reclamo',
-    href: '#reclamos',
+    href: '/reclamos',
     color: 'from-amber-500 to-amber-600',
   },
   {
     icon: FileText,
     label: 'Trámites',
     description: 'Guía y requisitos',
-    href: '#tramites',
+    href: '/tramites',
     color: 'from-violet-500 to-violet-600',
   },
 ]
@@ -86,7 +86,7 @@ export function Hero() {
                 <ArrowRight className="h-5 w-5" />
               </a>
               <a 
-                href="#portal"
+                href="/portal"
                 className="btn-secondary"
               >
                 Portal Ciudadano
