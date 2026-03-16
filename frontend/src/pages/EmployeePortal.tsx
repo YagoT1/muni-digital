@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../services/api'
-import { logout } from '../services/authService'
-import type { AuthUser } from '../types/auth'
+import { logout, setToken } from '../services/authService'
+
+type MeProfile = { email: string; role: string; id?: number; legajo?: string | null }
 
 function routeByRole(role?: string | null) {
   switch ((role ?? '').toLowerCase()) {
@@ -34,16 +35,18 @@ export default function EmployeePortal() {
         skipAuth: true,
       })
 
-      const me = await apiFetch<AuthUser>('/auth/me')
+      setToken(data.access_token)
+
+      const me = await apiFetch<MeProfile>('/auth/me')
 
       const destination = routeByRole(me.role)
       if (!destination) {
-        await logout()
+        logout()
         setError('Acceso denegado: no pertenece al staff.')
         return
       }
 
-      navigate(destination, { replace: true })
+      navigate(destination)
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Error'
       setError(message)

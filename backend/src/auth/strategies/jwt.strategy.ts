@@ -14,17 +14,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const secret = configService.get<string>('JWT_SECRET')
     if (!secret) throw new Error('JWT_SECRET is not set')
 
-    const cookieExtractor = (req: { headers?: { cookie?: string } }) => {
-      const cookie = req?.headers?.cookie
-      if (!cookie) return null
-      const tokenPair = cookie
-        .split(';')
-        .map((v) => v.trim())
-        .find((v) => v.startsWith('md_access_token='))
-      if (!tokenPair) return null
-      return decodeURIComponent(tokenPair.replace('md_access_token=', ''))
-    }
-
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),

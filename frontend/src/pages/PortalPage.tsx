@@ -73,7 +73,7 @@ export default function PortalPage() {
     try {
       const me = await apiFetch<{ role?: string }>('/auth/me')
       const finalRoute = routeByRole(me?.role)
-      navigate(finalRoute, { replace: true })
+      if (finalRoute !== fastRoute) navigate(finalRoute, { replace: true })
     } catch {
       navigate('/portal?tab=login', { replace: true })
     }

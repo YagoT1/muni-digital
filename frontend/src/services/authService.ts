@@ -21,20 +21,39 @@ export type RegisterPayload = {
   legajo?: string
 }
 
+function base64UrlDecode(input: string) {
+  const base64 = input.replace(/-/g, '+').replace(/_/g, '/')
+  const pad = base64.length % 4
+  const padded = pad ? base64 + '='.repeat(4 - pad) : base64
+
+  return decodeURIComponent(
+    atob(padded)
+      .split('')
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join(''),
+  )
+}
+
 export function getToken(): string | null {
   return null
 }
 
-export function setToken(_token: string) {
-  // No-op: authentication now relies on HttpOnly cookie set by backend.
+export function setToken(token: string) {
+  localStorage.setItem(TOKEN_KEY, token)
 }
 
 export async function logout() {
   await apiFetch('/auth/logout', { method: 'POST' })
 }
 
-export function decodeToken(_token: string): JwtPayload | null {
-  return null
+export function decodeToken(token: string): JwtPayload | null {
+  try {
+    const [, payload] = token.split('.')
+    if (!payload) return null
+    return JSON.parse(base64UrlDecode(payload)) as JwtPayload
+  } catch {
+    return null
+  }
 }
 
 export function isTokenValid(_token: string | null): boolean {
@@ -75,6 +94,28 @@ function toRegisterPayload(
   }
 }
 
+function toRegisterPayload(
+  payloadOrDni: RegisterPayload | string,
+  email?: string,
+  password?: string,
+  legajo?: string,
+): RegisterPayload {
+  if (typeof payloadOrDni !== 'string') return payloadOrDni
+
+  return {
+    dni: payloadOrDni.trim(),
+    email: (email ?? '').trim(),
+    password: password ?? '',
+    legajo,
+    firstName: 'Usuario',
+    lastName: 'Portal',
+    birthDate: '1990-01-01',
+    country: 'AR',
+    province: 'Buenos Aires',
+    city: 'Roque Pérez',
+  }
+}
+
 export async function register(
   payloadOrDni: RegisterPayload | string,
   email?: string,
@@ -83,9 +124,12 @@ export async function register(
 ) {
   const payload = toRegisterPayload(payloadOrDni, email, password, legajo)
 
-  return apiFetch<{ access_token: string }>('/auth/register', {
+  const data = await apiFetch<{ access_token: string }>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
     skipAuth: true,
   })
+
+  setToken(data.access_token)
+  return data
 }

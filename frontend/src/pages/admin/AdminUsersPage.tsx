@@ -2,8 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useUsersAdmin } from '../../hooks/useUsersAdmin'
-import type { UserRole } from '../../services/adminUsersService'
+import {
+  listUsers,
+  resetUserPassword,
+  setUserActive,
+  setUserRole,
+} from '../../services/adminUsersService'
+import type { UserRole, UserSafe } from '../../services/adminUsersService'
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'admin', label: 'Admin' },
@@ -14,23 +19,28 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
 ]
 
 export default function AdminUsersPage() {
+  const [users, setUsers] = useState<UserSafe[]>([])
+  const [loading, setLoading] = useState(true)
+  const [busyId, setBusyId] = useState<number | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState('')
-  const {
-    users,
-    loading,
-    busyId,
-    error,
-    resetMessage,
-    pagination,
-    load,
-    onToggleActive,
-    onChangeRole,
-    onResetPassword
-  } = useUsersAdmin()
+  const [resetMessage, setResetMessage] = useState<string | null>(null)
+
+  const load = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      setUsers(await listUsers())
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo cargar la lista')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    load(1)
-  }, [load])
+    load()
+  }, [])
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
@@ -46,10 +56,42 @@ export default function AdminUsersPage() {
     })
   }, [users, q])
 
-  const askReset = async (id: number) => {
-    const input = window.prompt('Ingresá la nueva contraseña (mínimo 8 caracteres, incluir letras y números):')
-    if (!input) return
-    await onResetPassword(id, input)
+  const onToggleActive = async (u: UserSafe) => {
+    try {
+      setBusyId(u.id)
+      await setUserActive(u.id, !u.isActive)
+      await load()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo actualizar estado')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const onChangeRole = async (id: number, role: UserRole) => {
+    try {
+      setBusyId(id)
+      await setUserRole(id, role)
+      await load()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo actualizar rol')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const onResetPassword = async (id: number) => {
+    try {
+      setBusyId(id)
+      const input = window.prompt('Ingresá la nueva contraseña (mínimo 8 caracteres, incluir letras y números):')
+      if (!input) return
+      const res = await resetUserPassword(id, input)
+      setResetMessage(res.message)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'No se pudo resetear password')
+    } finally {
+      setBusyId(null)
+    }
   }
 
   if (loading) return <div className="p-6">Cargando usuarios...</div>
@@ -59,10 +101,10 @@ export default function AdminUsersPage() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold">Gestión de Usuarios</h2>
-          <p className="text-sm text-muted-foreground">Listado paginado, estado, rol y acciones administrativas.</p>
+          <p className="text-sm text-muted-foreground">Listado, estado, rol y acciones administrativas.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => load(pagination.page)}>Refrescar</Button>
+          <Button variant="outline" onClick={load}>Refrescar</Button>
           <Button asChild><Link to="/admin/usuarios/nuevo">Nuevo usuario</Link></Button>
         </div>
       </div>
@@ -121,7 +163,7 @@ export default function AdminUsersPage() {
                       <Button asChild size="sm" variant="outline">
                         <Link to={`/admin/usuarios/${u.id}/editar`}>Editar</Link>
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => askReset(u.id)} disabled={busy}>
+                      <Button size="sm" variant="outline" onClick={() => onResetPassword(u.id)} disabled={busy}>
                         Reset PW
                       </Button>
                     </div>
@@ -131,26 +173,6 @@ export default function AdminUsersPage() {
             })}
           </tbody>
         </table>
-      </div>
-
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="outline"
-          onClick={() => load(Math.max(1, pagination.page - 1))}
-          disabled={pagination.page <= 1}
-        >
-          Anterior
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          Página {pagination.page} de {pagination.totalPages}
-        </span>
-        <Button
-          variant="outline"
-          onClick={() => load(Math.min(pagination.totalPages, pagination.page + 1))}
-          disabled={pagination.page >= pagination.totalPages}
-        >
-          Siguiente
-        </Button>
       </div>
 
       {resetMessage && (

@@ -5,18 +5,10 @@ import { DataSource } from 'typeorm'
 import { seedAdmin } from './seed/seed-admin'
 
 function getCorsOrigins() {
-  const configured = (process.env.CORS_ORIGINS ?? '')
+  return (process.env.CORS_ORIGINS ?? '')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean)
-
-  if (configured.length > 0) return configured
-
-  if (process.env.NODE_ENV !== 'production') {
-    return ['http://localhost:5173', 'http://127.0.0.1:5173']
-  }
-
-  return []
 }
 
 function shouldRunSeedAdmin() {
@@ -34,7 +26,7 @@ async function bootstrap() {
   app.getHttpAdapter().getInstance().set('trust proxy', 1)
 
   const origins = getCorsOrigins()
-  if (origins.length === 0) {
+  if (origins.length === 0 && process.env.NODE_ENV !== 'production') {
     logger.warn('CORS_ORIGINS is empty. No cross-origin browser requests will be allowed.')
   }
 
