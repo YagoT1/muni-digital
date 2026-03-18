@@ -1,5 +1,7 @@
 import type { ApiErrorPayload } from '../types/api'
 
+const TOKEN_KEY = 'access_token'
+
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 type ApiFetchOptions = RequestInit & {
@@ -15,6 +17,10 @@ export async function apiFetch<T = unknown>(
   const headers = new Headers(options.headers || {})
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
+  }
+  if (!options.skipAuth && !headers.has('Authorization')) {
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (token) headers.set('Authorization', `Bearer ${token}`)
   }
 
   const res = await fetch(url, {
