@@ -1,5 +1,7 @@
 import { apiFetch } from './api'
 
+const TOKEN_KEY = 'access_token'
+
 type JwtPayload = {
   sub?: number
   email?: string
@@ -70,28 +72,6 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
     skipAuth: true,
   })
-}
-
-function toRegisterPayload(
-  payloadOrDni: RegisterPayload | string,
-  email?: string,
-  password?: string,
-  legajo?: string,
-): RegisterPayload {
-  if (typeof payloadOrDni !== 'string') return payloadOrDni
-
-  return {
-    dni: payloadOrDni.trim(),
-    email: (email ?? '').trim(),
-    password: password ?? '',
-    legajo,
-    firstName: 'Usuario',
-    lastName: 'Portal',
-    birthDate: '1990-01-01',
-    country: 'AR',
-    province: 'Buenos Aires',
-    city: 'Roque Pérez',
-  }
 }
 
 function toRegisterPayload(

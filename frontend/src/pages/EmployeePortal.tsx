@@ -29,7 +29,7 @@ export default function EmployeePortal() {
   const handleLogin = async () => {
     setError('')
     try {
-      await apiFetch<{ access_token: string }>('/auth/login', {
+      const data = await apiFetch<{ access_token: string }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         skipAuth: true,
