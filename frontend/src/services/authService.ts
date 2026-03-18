@@ -37,7 +37,7 @@ function base64UrlDecode(input: string) {
 }
 
 export function getToken(): string | null {
-  return null
+  return localStorage.getItem(TOKEN_KEY)
 }
 
 export function setToken(token: string) {
@@ -46,6 +46,7 @@ export function setToken(token: string) {
 
 export async function logout() {
   await apiFetch('/auth/logout', { method: 'POST' })
+  localStorage.removeItem(TOKEN_KEY)
 }
 
 export function decodeToken(token: string): JwtPayload | null {
@@ -58,42 +59,31 @@ export function decodeToken(token: string): JwtPayload | null {
   }
 }
 
-export function isTokenValid(_token: string | null): boolean {
-  return false
+export function isTokenValid(token: string | null): boolean {
+  if (!token) return false
+
+  const payload = decodeToken(token)
+  if (!payload?.exp) return false
+
+  const nowInSeconds = Math.floor(Date.now() / 1000)
+  return payload.exp > nowInSeconds
 }
 
-export function getRoleFromToken(_token: string | null): string | null {
-  return null
+export function getRoleFromToken(token: string | null): string | null {
+  if (!token) return null
+  const payload = decodeToken(token)
+  return payload?.role ?? null
 }
 
 export async function login(email: string, password: string) {
-  return apiFetch<{ access_token: string }>('/auth/login', {
+  const data = await apiFetch<{ access_token: string }>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
     skipAuth: true,
   })
-}
 
-function toRegisterPayload(
-  payloadOrDni: RegisterPayload | string,
-  email?: string,
-  password?: string,
-  legajo?: string,
-): RegisterPayload {
-  if (typeof payloadOrDni !== 'string') return payloadOrDni
-
-  return {
-    dni: payloadOrDni.trim(),
-    email: (email ?? '').trim(),
-    password: password ?? '',
-    legajo,
-    firstName: 'Usuario',
-    lastName: 'Portal',
-    birthDate: '1990-01-01',
-    country: 'AR',
-    province: 'Buenos Aires',
-    city: 'Roque Pérez',
-  }
+  setToken(data.access_token)
+  return data
 }
 
 export async function register(
