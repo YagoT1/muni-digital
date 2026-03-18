@@ -5,6 +5,14 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { UsersService } from '../../users/users.service'
 import { UserRole } from '../../users/user.entity'
 
+// ✅ FIX: extractor de cookies
+const cookieExtractor = (req: any): string | null => {
+  if (req && req.cookies) {
+    return req.cookies['access_token'] || null
+  }
+  return null
+}
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -17,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
+        cookieExtractor, // ahora sí existe
       ]),
       ignoreExpiration: false,
       secretOrKey: secret,

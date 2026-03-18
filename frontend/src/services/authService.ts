@@ -23,6 +23,33 @@ export type RegisterPayload = {
   legajo?: string
 }
 
+// =========================
+// FIX: función faltante
+// =========================
+function toRegisterPayload(
+  payloadOrDni: RegisterPayload | string,
+  email?: string,
+  password?: string,
+  legajo?: string,
+): RegisterPayload {
+  // Caso moderno (objeto completo)
+  if (typeof payloadOrDni === 'object') {
+    return payloadOrDni
+  }
+
+  // Caso legacy (dni + email + password)
+  return {
+    dni: payloadOrDni,
+    email: email || '',
+    password: password || '',
+    legajo: legajo ?? undefined,
+  }
+}
+
+// =========================
+// UTILS JWT
+// =========================
+
 function base64UrlDecode(input: string) {
   const base64 = input.replace(/-/g, '+').replace(/_/g, '/')
   const pad = base64.length % 4
@@ -74,6 +101,10 @@ export function getRoleFromToken(token: string | null): string | null {
   const payload = decodeToken(token)
   return payload?.role ?? null
 }
+
+// =========================
+// AUTH
+// =========================
 
 export async function login(email: string, password: string) {
   const data = await apiFetch<{ access_token: string }>('/auth/login', {

@@ -3,7 +3,7 @@ import { AppModule } from './app.module'
 import { ValidationPipe, Logger } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { seedAdmin } from './seed/seed-admin'
-
+import * as cookieParser from 'cookie-parser'
 function getCorsOrigins() {
   return (process.env.CORS_ORIGINS ?? '')
     .split(',')
@@ -58,5 +58,6 @@ async function bootstrap() {
   }
 
   await app.listen(process.env.PORT ?? 3000)
+  app.use(cookieParser.default())
 }
 bootstrap()
