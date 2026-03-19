@@ -25,10 +25,16 @@ export function useUsersAdmin() {
       setLoading(true)
       setError(null)
       const result = await listUsers({ page: nextPage, limit: DEFAULT_LIMIT })
-      const data = result as PaginatedResponse<UserSafe>
-      setUsers(data.items)
-      setPage(data.page)
-      setTotalPages(data.totalPages)
+      if (Array.isArray(result)) {
+        setUsers(result)
+        setPage(1)
+        setTotalPages(1)
+      } else {
+        const data: PaginatedResponse<UserSafe> = result
+        setUsers(data.items)
+        setPage(data.page)
+        setTotalPages(data.totalPages)
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo cargar la lista')
     } finally {
