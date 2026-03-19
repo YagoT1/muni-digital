@@ -4,6 +4,7 @@ import type { Response } from 'express'
 import { AuthService } from './auth.service'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
+import { COOKIE_NAME } from './auth.constants'
 
 function buildAuthCookieOptions() {
   const isProd = process.env.NODE_ENV === 'production'
@@ -23,20 +24,20 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.register(dto)
-    res.cookie('md_access_token', result.access_token, buildAuthCookieOptions())
+    res.cookie(COOKIE_NAME, result.access_token, buildAuthCookieOptions())
     return result
   }
 
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.login(dto.email, dto.password)
-    res.cookie('md_access_token', result.access_token, buildAuthCookieOptions())
+    res.cookie(COOKIE_NAME, result.access_token, buildAuthCookieOptions())
     return result
   }
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('md_access_token', { path: '/' })
+    res.clearCookie(COOKIE_NAME, { path: '/' })
     return { ok: true }
   }
 

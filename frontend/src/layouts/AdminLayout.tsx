@@ -7,6 +7,7 @@ const links = [
   { to: '/admin/usuarios', label: 'Usuarios' },
   { to: '/admin/turnos', label: 'Turnos' },
   { to: '/admin/pagos', label: 'Pagos' },
+  { to: '/admin/notifications', label: 'Notificaciones' },
 ]
 
 export default function AdminLayout() {
