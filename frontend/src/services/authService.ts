@@ -11,16 +11,15 @@ type JwtPayload = {
 }
 
 export type RegisterPayload = {
-  firstName?: string
-  lastName?: string
-  dni?: string
-  birthDate?: string
+  firstName: string
+  lastName: string
+  dni: string
+  birthDate: string
   email: string
   password: string
-  country?: string
-  province?: string
-  city?: string
-  legajo?: string
+  country: string
+  province: string
+  city: string
 }
 
 // =========================
@@ -37,13 +36,13 @@ function toRegisterPayload(
     return payloadOrDni
   }
 
-  // Caso legacy (dni + email + password)
-  return {
-    dni: payloadOrDni,
-    email: email || '',
-    password: password || '',
-    legajo: legajo ?? undefined,
-  }
+  void email
+  void password
+  void legajo
+
+  throw new Error(
+    'Formato de registro legacy no soportado. Enviar objeto RegisterPayload completo.',
+  )
 }
 
 // =========================
@@ -72,8 +71,11 @@ export function setToken(token: string) {
 }
 
 export async function logout() {
-  await apiFetch('/auth/logout', { method: 'POST' })
-  localStorage.removeItem(TOKEN_KEY)
+  try {
+    await apiFetch('/auth/logout', { method: 'POST' })
+  } finally {
+    localStorage.removeItem(TOKEN_KEY)
+  }
 }
 
 export function decodeToken(token: string): JwtPayload | null {
