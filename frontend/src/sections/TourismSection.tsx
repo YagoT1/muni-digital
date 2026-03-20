@@ -1,4 +1,5 @@
 import { MapPin, Camera, Utensils, Bed, ArrowRight, Compass } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const tourismCategories = [
   { icon: Camera, title: 'Qué visitar', description: 'Atractivos turísticos, lugares históricos y puntos de interés.', href: '/turismo', color: 'bg-violet-50 text-violet-600' },
@@ -18,12 +19,12 @@ export function TourismSection() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {tourismCategories.map((category) => (
-            <a key={category.title} href={category.href} className="group text-center p-6 bg-white rounded-2xl shadow-soft hover:shadow-soft-md transition-all duration-300">
+            <Link key={category.title} to={category.href} className="group text-center p-6 bg-white rounded-2xl shadow-soft hover:shadow-soft-md transition-all duration-300">
               <div className={`inline-flex p-4 rounded-2xl ${category.color} mb-4`}><category.icon className="h-7 w-7" /></div>
               <h3 className="font-semibold text-lg text-slate-900 mb-2">{category.title}</h3>
               <p className="text-sm text-slate-500 mb-4">{category.description}</p>
               <span className="inline-flex items-center text-sm font-medium text-muni-600">Explorar<ArrowRight className="ml-1.5 h-4 w-4" /></span>
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -31,7 +32,7 @@ export function TourismSection() {
           <p className="text-slate-600">Conocé atractivos, agenda cultural y cómo llegar en la nueva sección de turismo.</p>
           <div className="flex gap-3">
             <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium"><MapPin className="h-4 w-4" />Google Maps</a>
-            <a href="/turismo" className="inline-flex items-center bg-emerald-500 hover:bg-emerald-600 gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white"><Compass className="h-4 w-4" />Planificar viaje</a>
+            <Link to="/turismo" className="inline-flex items-center bg-emerald-500 hover:bg-emerald-600 gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white"><Compass className="h-4 w-4" />Planificar viaje</Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 type AccessibilityState = {
   reducedMotion: boolean
@@ -39,6 +39,14 @@ export function AccessibilityProvider({
     }),
     [reducedMotion, highContrast, fontScale],
   )
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('high-contrast', highContrast)
+  }, [highContrast])
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-scale', String(fontScale))
+  }, [fontScale])
 
   return (
     <AccessibilityContext.Provider value={value}>

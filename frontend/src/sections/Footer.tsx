@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAccessibility } from '@/context/AccessibilityContext'
+import { Link, useNavigate } from 'react-router-dom'
 
 const footerLinks = {
   servicios: [
@@ -49,6 +50,15 @@ const socialLinks = [
 
 export function Footer() {
   const { highContrast, toggleHighContrast, largeText, toggleLargeText } = useAccessibility()
+  const navigate = useNavigate()
+
+  const goTo = (href: string) => {
+    if (href.startsWith('#')) {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+    navigate(href)
+  }
 
   return (
     <footer className="bg-slate-900 text-slate-300">
@@ -134,9 +144,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.servicios.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -147,9 +163,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.municipalidad.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -160,9 +182,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.comunidad.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

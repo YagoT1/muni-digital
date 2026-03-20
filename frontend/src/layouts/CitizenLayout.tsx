@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
@@ -27,9 +27,11 @@ function RoleLayout({
   subtitle: string
   links: { to: string; label: string }[]
 }) {
+  const navigate = useNavigate()
+
   const handleLogout = () => {
     logout()
-    window.location.replace('/portal?tab=login')
+    navigate('/portal?tab=login', { replace: true })
   }
 
   return (
@@ -41,7 +43,7 @@ function RoleLayout({
             <p className="text-xs text-muted-foreground">{subtitle}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.location.replace('/')}>
+            <Button variant="outline" onClick={() => navigate('/', { replace: true })}>
               Inicio público
             </Button>
             <Button variant="outline" onClick={handleLogout}>

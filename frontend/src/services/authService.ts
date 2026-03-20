@@ -10,17 +10,24 @@ type JwtPayload = {
   iat?: number
 }
 
+function assertAccessTokenResponse(
+  data: unknown,
+): asserts data is { access_token: string } {
+  if (!data || typeof data !== 'object' || typeof (data as { access_token?: unknown }).access_token !== 'string') {
+    throw new Error('Invalid response')
+  }
+}
+
 export type RegisterPayload = {
-  firstName?: string
-  lastName?: string
-  dni?: string
-  birthDate?: string
+  firstName: string
+  lastName: string
+  dni: string
+  birthDate: string
   email: string
   password: string
-  country?: string
-  province?: string
-  city?: string
-  legajo?: string
+  country: string
+  province: string
+  city: string
 }
 
 // =========================
@@ -37,13 +44,13 @@ function toRegisterPayload(
     return payloadOrDni
   }
 
-  // Caso legacy (dni + email + password)
-  return {
-    dni: payloadOrDni,
-    email: email || '',
-    password: password || '',
-    legajo: legajo ?? undefined,
-  }
+  void email
+  void password
+  void legajo
+
+  throw new Error(
+    'Formato de registro legacy no soportado. Enviar objeto RegisterPayload completo.',
+  )
 }
 
 // =========================
@@ -72,8 +79,11 @@ export function setToken(token: string) {
 }
 
 export async function logout() {
-  await apiFetch('/auth/logout', { method: 'POST' })
-  localStorage.removeItem(TOKEN_KEY)
+  try {
+    await apiFetch('/auth/logout', { method: 'POST' })
+  } finally {
+    localStorage.removeItem(TOKEN_KEY)
+  }
 }
 
 export function decodeToken(token: string): JwtPayload | null {
@@ -107,12 +117,13 @@ export function getRoleFromToken(token: string | null): string | null {
 // =========================
 
 export async function login(email: string, password: string) {
-  const data = await apiFetch<{ access_token: string }>('/auth/login', {
+  const data = await apiFetch<unknown>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
     skipAuth: true,
   })
 
+  assertAccessTokenResponse(data)
   setToken(data.access_token)
   return data
 }
@@ -125,12 +136,13 @@ export async function register(
 ) {
   const payload = toRegisterPayload(payloadOrDni, email, password, legajo)
 
-  const data = await apiFetch<{ access_token: string }>('/auth/register', {
+  const data = await apiFetch<unknown>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
     skipAuth: true,
   })
 
+  assertAccessTokenResponse(data)
   setToken(data.access_token)
   return data
 }

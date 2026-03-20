@@ -1,4 +1,5 @@
 import { CreditCard, Calendar, FileText, MessageSquare, ArrowRight, MapPin } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const quickActions = [
   {
@@ -38,6 +39,8 @@ const stats = [
 ]
 
 export function Hero() {
+  const navigate = useNavigate()
+
   return (
     <section id="inicio" className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background with gradient and subtle pattern */}
@@ -78,19 +81,23 @@ export function Hero() {
             
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <a 
-                href="#servicios"
+              <button
+                type="button"
                 className="btn-primary"
+                onClick={() =>
+                  document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })
+                }
               >
                 Explorar servicios
                 <ArrowRight className="h-5 w-5" />
-              </a>
-              <a 
-                href="/portal"
+              </button>
+              <button
+                type="button"
                 className="btn-secondary"
+                onClick={() => navigate('/portal')}
               >
                 Portal Ciudadano
-              </a>
+              </button>
             </div>
             
             {/* Stats - Minimalist */}
@@ -107,11 +114,12 @@ export function Hero() {
           {/* Right Column - Quick Actions Grid */}
           <div className="grid grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             {quickActions.map((action, index) => (
-              <a
+              <button
+                type="button"
                 key={action.label}
-                href={action.href}
                 className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 p-6 transition-all duration-300 hover:bg-white/15 hover:scale-[1.02] hover:shadow-soft-xl"
                 style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+                onClick={() => navigate(action.href)}
               >
                 {/* Gradient accent */}
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${action.color}`} />
@@ -127,7 +135,7 @@ export function Hero() {
                     className="h-5 w-5 mt-auto pt-4 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" 
                   />
                 </div>
-              </a>
+              </button>
             ))}
           </div>
         </div>
