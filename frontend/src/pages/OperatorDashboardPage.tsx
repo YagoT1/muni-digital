@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { apiFetch } from '../services/api'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 type MeResponse = {
   id: number
@@ -10,16 +12,22 @@ type MeResponse = {
 
 export default function OperatorDashboardPage() {
   const [user, setUser] = useState<MeResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async () => {
-      const me = await apiFetch<MeResponse>('/auth/me')
-      setUser(me)
+      try {
+        const me = await apiFetch<MeResponse>('/auth/me')
+        setUser(me)
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'No se pudo cargar el panel de operador.')
+      }
     }
     load()
   }, [])
 
-  if (!user) return <div className="p-6">Cargando...</div>
+  if (error) return <ErrorState message={error} />
+  if (!user) return <LoadingState text="Cargando panel de operador..." />
 
   return (
     <div className="space-y-6">

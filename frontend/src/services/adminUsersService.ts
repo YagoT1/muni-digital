@@ -50,6 +50,42 @@ export type UserFormPayload = {
   isVerified?: boolean
 }
 
+function isUserSafe(value: unknown): value is UserSafe {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  return (
+    typeof v.id === 'number' &&
+    typeof v.email === 'string' &&
+    typeof v.role === 'string' &&
+    typeof v.isActive === 'boolean' &&
+    typeof v.isVerified === 'boolean'
+  )
+}
+
+function isPaginatedUsers(value: unknown): value is PaginatedResponse<UserSafe> {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  return (
+    Array.isArray(v.items) &&
+    v.items.every(isUserSafe) &&
+    typeof v.total === 'number' &&
+    typeof v.page === 'number' &&
+    typeof v.totalPages === 'number'
+  )
+}
+
+function isAdminStats(value: unknown): value is AdminStats {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  return (
+    typeof v.total === 'number' &&
+    typeof v.active === 'number' &&
+    typeof v.inactive === 'number' &&
+    !!v.byRole &&
+    typeof v.byRole === 'object'
+  )
+}
+
 export async function listUsers(params?: {
   page?: number
   limit?: number
@@ -58,35 +94,47 @@ export async function listUsers(params?: {
     const q = new URLSearchParams()
     if (params.page) q.set('page', String(params.page))
     if (params.limit) q.set('limit', String(params.limit))
-    return apiFetch<PaginatedResponse<UserSafe>>(`/users?${q.toString()}`)
+    const data = await apiFetch<unknown>(`/users?${q.toString()}`)
+    if (!isPaginatedUsers(data)) throw new Error('Invalid response')
+    return data
   }
 
-  return apiFetch<UserSafe[]>('/users')
+  const data = await apiFetch<unknown>('/users')
+  if (!Array.isArray(data) || !data.every(isUserSafe)) throw new Error('Invalid response')
+  return data
 }
 
 export async function getAdminStats(): Promise<AdminStats> {
-  return apiFetch<AdminStats>('/users/stats')
+  const data = await apiFetch<unknown>('/users/stats')
+  if (!isAdminStats(data)) throw new Error('Invalid response')
+  return data
 }
 
 export async function getUserById(id: number): Promise<UserSafe> {
-  return apiFetch<UserSafe>(`/users/${id}`)
+  const data = await apiFetch<unknown>(`/users/${id}`)
+  if (!isUserSafe(data)) throw new Error('Invalid response')
+  return data
 }
 
 export async function createUser(payload: UserFormPayload): Promise<UserSafe> {
-  return apiFetch<UserSafe>('/users', {
+  const data = await apiFetch<unknown>('/users', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+  if (!isUserSafe(data)) throw new Error('Invalid response')
+  return data
 }
 
 export async function updateUser(
   id: number,
   payload: Partial<UserFormPayload>,
 ): Promise<UserSafe> {
-  return apiFetch<UserSafe>(`/users/${id}`, {
+  const data = await apiFetch<unknown>(`/users/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   })
+  if (!isUserSafe(data)) throw new Error('Invalid response')
+  return data
 }
 
 export async function setUserRole(id: number, role: UserRole): Promise<void> {
