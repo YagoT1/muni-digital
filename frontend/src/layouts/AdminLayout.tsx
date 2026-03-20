@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
@@ -11,9 +11,11 @@ const links = [
 ]
 
 export default function AdminLayout() {
+  const navigate = useNavigate()
+
   const handleLogout = () => {
     logout()
-    window.location.replace('/portal?tab=login')
+    navigate('/portal?tab=login', { replace: true })
   }
 
   return (

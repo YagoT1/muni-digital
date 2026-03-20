@@ -10,6 +10,14 @@ type JwtPayload = {
   iat?: number
 }
 
+function assertAccessTokenResponse(
+  data: unknown,
+): asserts data is { access_token: string } {
+  if (!data || typeof data !== 'object' || typeof (data as { access_token?: unknown }).access_token !== 'string') {
+    throw new Error('Invalid response')
+  }
+}
+
 export type RegisterPayload = {
   firstName: string
   lastName: string
@@ -109,12 +117,13 @@ export function getRoleFromToken(token: string | null): string | null {
 // =========================
 
 export async function login(email: string, password: string) {
-  const data = await apiFetch<{ access_token: string }>('/auth/login', {
+  const data = await apiFetch<unknown>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
     skipAuth: true,
   })
 
+  assertAccessTokenResponse(data)
   setToken(data.access_token)
   return data
 }
@@ -127,12 +136,13 @@ export async function register(
 ) {
   const payload = toRegisterPayload(payloadOrDni, email, password, legajo)
 
-  const data = await apiFetch<{ access_token: string }>('/auth/register', {
+  const data = await apiFetch<unknown>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
     skipAuth: true,
   })
 
+  assertAccessTokenResponse(data)
   setToken(data.access_token)
   return data
 }

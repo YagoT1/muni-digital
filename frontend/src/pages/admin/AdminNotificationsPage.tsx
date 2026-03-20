@@ -3,6 +3,10 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { ActionDialog } from '@/components/ui/ActionDialog'
 import {
   createNotification,
   listNotifications,
@@ -19,6 +23,10 @@ export default function AdminNotificationsPage() {
 
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editId, setEditId] = useState<number | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editMessage, setEditMessage] = useState('')
 
   const load = async () => {
     try {
@@ -65,17 +73,20 @@ export default function AdminNotificationsPage() {
     }
   }
 
-  const onEditMessage = async (item: NotificationItem) => {
-    const nextTitle = window.prompt('Editar título', item.title)
-    if (nextTitle === null) return
+  const onOpenEdit = (item: NotificationItem) => {
+    setEditId(item.id)
+    setEditTitle(item.title)
+    setEditMessage(item.message)
+    setEditDialogOpen(true)
+  }
 
-    const nextMessage = window.prompt('Editar mensaje', item.message)
-    if (nextMessage === null) return
-
+  const onEditMessage = async () => {
+    if (!editId) return
     try {
-      setEditingId(item.id)
-      await updateNotification(item.id, { title: nextTitle, message: nextMessage })
+      setEditingId(editId)
+      await updateNotification(editId, { title: editTitle, message: editMessage })
       await load()
+      setEditDialogOpen(false)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo editar notificación')
     } finally {
@@ -93,7 +104,7 @@ export default function AdminNotificationsPage() {
         <Button variant="outline" onClick={load}>Refrescar</Button>
       </div>
 
-      {error && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-700 text-sm">{error}</div>}
+      {error ? <ErrorState message={error} /> : null}
 
       <Card className="space-y-3">
         <h3 className="text-base font-semibold">Nueva notificación</h3>
@@ -119,7 +130,13 @@ export default function AdminNotificationsPage() {
 
       <Card className="overflow-auto p-0">
         {loading ? (
-          <div className="p-4 text-sm text-muted-foreground">Cargando notificaciones...</div>
+          <div className="p-4">
+            <LoadingState text="Cargando notificaciones..." />
+          </div>
+        ) : items.length === 0 ? (
+          <div className="p-4">
+            <EmptyState message="No hay notificaciones creadas." />
+          </div>
         ) : (
           <table className="min-w-full text-sm">
             <thead className="bg-slate-100">
@@ -142,7 +159,7 @@ export default function AdminNotificationsPage() {
                     <td className="p-3">{item.isActive ? 'Activa' : 'Inactiva'}</td>
                     <td className="p-3">
                       <div className="flex gap-2">
-                        <Button size="sm" variant="outline" disabled={busy} onClick={() => onEditMessage(item)}>
+                        <Button size="sm" variant="outline" disabled={busy} onClick={() => onOpenEdit(item)}>
                           Editar
                         </Button>
                         <Button size="sm" variant={item.isActive ? 'destructive' : 'default'} disabled={busy} onClick={() => onToggleActive(item)}>
@@ -157,6 +174,28 @@ export default function AdminNotificationsPage() {
           </table>
         )}
       </Card>
+
+      <ActionDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        title="Editar notificación"
+        description="Actualizá el título y mensaje del banner."
+        confirmLabel="Guardar cambios"
+        loading={editingId === editId && editId !== null}
+        onConfirm={onEditMessage}
+      >
+        <Input
+          placeholder="Título"
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+        />
+        <Textarea
+          placeholder="Mensaje"
+          value={editMessage}
+          onChange={(e) => setEditMessage(e.target.value)}
+          rows={3}
+        />
+      </ActionDialog>
     </div>
   )
 }
