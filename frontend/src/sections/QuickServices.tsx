@@ -7,6 +7,7 @@ import {
   Building2,
   ArrowRight
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const services = [
   {
@@ -60,6 +61,8 @@ const services = [
 ]
 
 export function QuickServices() {
+  const navigate = useNavigate()
+
   return (
     <section id="servicios" className="section-modern bg-slate-50">
       <div className="container-modern">
@@ -79,11 +82,12 @@ export function QuickServices() {
         {/* Services Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
-            <a
+            <button
+              type="button"
               key={service.title}
-              href={service.href}
-              className="group relative bg-white rounded-2xl p-6 transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 overflow-hidden"
+              className="group relative bg-white rounded-2xl p-6 transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 overflow-hidden text-left"
               style={{ animationDelay: `${index * 0.05}s` }}
+              onClick={() => navigate(service.href)}
             >
               {/* Top accent line */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -105,19 +109,20 @@ export function QuickServices() {
                   </span>
                 </div>
               </div>
-            </a>
+            </button>
           ))}
         </div>
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <a
-            href="/tramites"
+          <button
+            type="button"
             className="inline-flex items-center gap-2 text-muni-600 hover:text-muni-700 font-medium transition-colors"
+            onClick={() => navigate('/tramites')}
           >
             Ver todos los servicios
             <ArrowRight className="h-5 w-5" />
-          </a>
+          </button>
         </div>
       </div>
     </section>
