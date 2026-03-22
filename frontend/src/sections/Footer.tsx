@@ -14,7 +14,8 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAccessibility } from '@/context/AccessibilityContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { goToSection } from '@/lib/navigation'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const footerLinks = {
   servicios: [
@@ -51,12 +52,14 @@ const socialLinks = [
 export function Footer() {
   const { highContrast, toggleHighContrast, largeText, toggleLargeText } = useAccessibility()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   const goTo = (href: string) => {
     if (href.startsWith('#')) {
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+      goToSection(href, navigate, pathname)
       return
     }
+
     navigate(href)
   }
 
@@ -205,15 +208,15 @@ export function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-500">
               <span>© 2026 Municipalidad de Roque Pérez</span>
               <span className="hidden md:inline">|</span>
-              <a href="#terminos" className="hover:text-slate-300 transition-colors">
+              <button type="button" onClick={() => goTo('#terminos')} className="hover:text-slate-300 transition-colors">
                 Términos
-              </a>
-              <a href="#privacidad" className="hover:text-slate-300 transition-colors">
+              </button>
+              <button type="button" onClick={() => goTo('#privacidad')} className="hover:text-slate-300 transition-colors">
                 Privacidad
-              </a>
-              <a href="#accesibilidad" className="hover:text-slate-300 transition-colors">
+              </button>
+              <button type="button" onClick={() => goTo('#accesibilidad')} className="hover:text-slate-300 transition-colors">
                 Accesibilidad
-              </a>
+              </button>
             </div>
 
             {/* Social Links */}

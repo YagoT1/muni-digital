@@ -1,5 +1,6 @@
 import { apiFetch } from './api'
 import type { PaginatedResponse } from '../types/api'
+import { isPaginated } from '@/lib/validators'
 
 export type UserRole =
   | 'admin'
@@ -62,18 +63,6 @@ function isUserSafe(value: unknown): value is UserSafe {
   )
 }
 
-function isPaginatedUsers(value: unknown): value is PaginatedResponse<UserSafe> {
-  if (!value || typeof value !== 'object') return false
-  const v = value as Record<string, unknown>
-  return (
-    Array.isArray(v.items) &&
-    v.items.every(isUserSafe) &&
-    typeof v.total === 'number' &&
-    typeof v.page === 'number' &&
-    typeof v.totalPages === 'number'
-  )
-}
-
 function isAdminStats(value: unknown): value is AdminStats {
   if (!value || typeof value !== 'object') return false
   const v = value as Record<string, unknown>
@@ -95,7 +84,7 @@ export async function listUsers(params?: {
     if (params.page) q.set('page', String(params.page))
     if (params.limit) q.set('limit', String(params.limit))
     const data = await apiFetch<unknown>(`/users?${q.toString()}`)
-    if (!isPaginatedUsers(data)) throw new Error('Invalid response')
+    if (!isPaginated(data, isUserSafe)) throw new Error('Invalid response')
     return data
   }
 

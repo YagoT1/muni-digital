@@ -1,18 +1,7 @@
 // src/App.tsx
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import './App.css'
 
-import { Header } from './sections/Header'
-import { Hero } from './sections/Hero'
-import { QuickServices } from './sections/QuickServices'
-import { NewsSection } from './sections/NewsSection'
-import { EventsCalendar } from './sections/EventsCalendar'
-import { TransparencySection } from './sections/TransparencySection'
-import { TourismSection } from './sections/TourismSection'
-import { CitizenPortal } from './sections/CitizenPortal'
-import { Footer } from './sections/Footer'
-import { NotificationBanner } from './components/ui/NotificationBanner'
 
 import ProtectedRoute from './components/ProtectedRoute'
 import PortalPage from './pages/PortalPage'
@@ -51,7 +40,9 @@ import AdminNotificationsPage from './pages/admin/AdminNotificationsPage'
 import AdminLayout from './layouts/AdminLayout'
 import CitizenLayout from './layouts/CitizenLayout'
 import EmployeeLayout from './layouts/EmployeeLayout'
+import MainLayout from './layouts/MainLayout'
 import OperatorLayout from './layouts/OperatorLayout'
+import HomePage from './pages/HomePage'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -74,43 +65,19 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <div className="min-h-screen bg-background">
-            <a href="#main-content" className="skip-to-content">
-              Ir al contenido principal
-            </a>
-
-            <NotificationBanner />
-
-            <Header />
-
-            <main id="main-content">
-              <Hero />
-              <QuickServices />
-              <NewsSection />
-              <EventsCalendar />
-              <TransparencySection />
-              <TourismSection />
-              <CitizenPortal />
-            </main>
-
-            <Footer />
-          </div>
-        }
-      />
-
-      <Route path="/portal" element={<PortalPage />} />
-      <Route path="/deudas" element={<DebtsPage />} />
-      <Route path="/turnos" element={<OnlineAppointmentsPage />} />
-      <Route path="/reclamos" element={<ClaimsPage />} />
-      <Route path="/tramites" element={<ProceduresPage />} />
-      <Route path="/transparencia" element={<TransparencyPage />} />
-      <Route path="/turismo" element={<TourismPage />} />
-      <Route path="/noticias" element={<NewsPage />} />
-      <Route path="/noticias/:id" element={<NewsDetailPage />} />
-      <Route path="/eventos" element={<EventsPage />} />
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="portal" element={<PortalPage />} />
+        <Route path="deudas" element={<DebtsPage />} />
+        <Route path="turnos" element={<OnlineAppointmentsPage />} />
+        <Route path="reclamos" element={<ClaimsPage />} />
+        <Route path="tramites" element={<ProceduresPage />} />
+        <Route path="transparencia" element={<TransparencyPage />} />
+        <Route path="turismo" element={<TourismPage />} />
+        <Route path="noticias" element={<NewsPage />} />
+        <Route path="noticias/:id" element={<NewsDetailPage />} />
+        <Route path="eventos" element={<EventsPage />} />
+      </Route>
 
       <Route element={<ProtectedRoute allowedRoles={['ciudadano']} />}>
         <Route path="/ciudadano" element={<CitizenLayout />}>

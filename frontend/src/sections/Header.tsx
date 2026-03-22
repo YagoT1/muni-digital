@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Search, Menu, X, User, Sun } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
+import { goToSection } from '@/lib/navigation'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -59,6 +60,7 @@ const searchSuggestions = [
 
 export function Header() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -76,9 +78,10 @@ export function Header() {
 
   const goTo = (href: string) => {
     if (href.startsWith('#')) {
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+      goToSection(href, navigate, pathname)
       return
     }
+
     navigate(href)
   }
 

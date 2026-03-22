@@ -9,7 +9,8 @@ import {
   BarChart3
 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
-import { Link } from 'react-router-dom'
+import { goToSection } from '@/lib/navigation'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const transparencyData = [
   {
@@ -60,6 +61,9 @@ const openDataLinks = [
 ]
 
 export function TransparencySection() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
   return (
     <section id="transparencia" className="section-modern bg-white">
       <div className="container-modern">
@@ -157,7 +161,7 @@ export function TransparencySection() {
             <button
               type="button"
               key={doc.title}
-              onClick={() => document.querySelector(`#${doc.title.toLowerCase()}`)?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => goToSection(`#${doc.title.toLowerCase()}`, navigate, pathname)}
               className="group flex items-center gap-4 p-5 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-all duration-300"
             >
               <div className={`p-3 rounded-xl ${doc.color}`}>

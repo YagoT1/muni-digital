@@ -1,5 +1,6 @@
 import { CreditCard, Calendar, FileText, MessageSquare, ArrowRight, MapPin } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { goToSection } from '@/lib/navigation'
 
 const quickActions = [
   {
@@ -40,6 +41,7 @@ const stats = [
 
 export function Hero() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   return (
     <section id="inicio" className="relative min-h-[90vh] flex items-center overflow-hidden">
@@ -85,7 +87,7 @@ export function Hero() {
                 type="button"
                 className="btn-primary"
                 onClick={() =>
-                  document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })
+                  goToSection('#servicios', navigate, pathname)
                 }
               >
                 Explorar servicios

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { Button } from './button'
+import type { VariantProps } from 'class-variance-authority'
+import { Button, buttonVariants } from './button'
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,8 @@ type ActionDialogProps = {
   confirmLabel?: string
   cancelLabel?: string
   loading?: boolean
+  loadingLabel?: string
+  confirmVariant?: VariantProps<typeof buttonVariants>['variant']
   onConfirm: () => void
   children: ReactNode
 }
@@ -29,6 +32,8 @@ export function ActionDialog({
   confirmLabel = 'Confirmar',
   cancelLabel = 'Cancelar',
   loading = false,
+  loadingLabel = 'Guardando...',
+  confirmVariant = 'default',
   onConfirm,
   children,
 }: ActionDialogProps) {
@@ -46,8 +51,8 @@ export function ActionDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
             {cancelLabel}
           </Button>
-          <Button onClick={onConfirm} disabled={loading}>
-            {loading ? 'Guardando...' : confirmLabel}
+          <Button variant={confirmVariant} onClick={onConfirm} disabled={loading}>
+            {loading ? loadingLabel : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
