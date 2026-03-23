@@ -22,7 +22,7 @@ const services = [
     icon: GraduationCap,
     title: 'Educación',
     description: 'Escuelas municipales, bibliotecas, becas y programas educativos.',
-    href: '/tramites',
+    href: '/educacion',
     color: 'bg-blue-50 text-blue-600',
     gradient: 'from-blue-500 to-blue-600',
   },
