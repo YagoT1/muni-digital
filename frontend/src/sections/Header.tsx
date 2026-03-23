@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Search, Menu, X, User, Sun } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
+import { goToSection } from '@/lib/navigation'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -59,6 +60,7 @@ const searchSuggestions = [
 
 export function Header() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -73,6 +75,15 @@ export function Header() {
   const filteredSuggestions = searchSuggestions.filter((s) =>
     s.toLowerCase().includes(searchQuery.toLowerCase()),
   )
+
+  const goTo = (href: string) => {
+    if (href.startsWith('#')) {
+      goToSection(href, navigate, pathname)
+      return
+    }
+
+    navigate(href)
+  }
 
   return (
     <header
@@ -118,7 +129,7 @@ export function Header() {
       <div className="container-modern py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="w-11 h-11 bg-gradient-to-br from-muni-500 to-muni-600 rounded-xl flex items-center justify-center text-white font-bold text-lg group-hover:shadow-soft-md transition-shadow">
               RP
             </div>
@@ -130,7 +141,7 @@ export function Header() {
                 Roque Pérez
               </p>
             </div>
-          </a>
+          </Link>
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-md relative">
@@ -205,14 +216,15 @@ export function Header() {
                           {item.children.map((child) => (
                             <li key={child.label}>
                               <NavigationMenuLink asChild>
-                                <a
-                                  href={child.href}
+                                <button
+                                  type="button"
+                                  onClick={() => goTo(child.href)}
                                   className="block select-none rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-50 text-slate-600 hover:text-slate-900"
                                 >
                                   <div className="text-sm font-medium">
                                     {child.label}
                                   </div>
-                                </a>
+                                </button>
                               </NavigationMenuLink>
                             </li>
                           ))}
@@ -220,12 +232,13 @@ export function Header() {
                       </NavigationMenuContent>
                     </>
                   ) : (
-                    <a
-                      href={item.href}
+                    <button
+                      type="button"
+                      onClick={() => goTo(item.href)}
                       className="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
                     >
                       {item.label}
-                    </a>
+                    </button>
                   )}
                 </NavigationMenuItem>
               ))}
@@ -252,24 +265,30 @@ export function Header() {
             <nav className="space-y-1">
               {navItems.map((item) => (
                 <div key={item.label}>
-                  <a
-                    href={item.href}
+                  <button
+                    type="button"
                     className="block px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-xl font-medium"
-                    onClick={() => !item.children && setIsMobileMenuOpen(false)}
+                    onClick={() => {
+                      goTo(item.href)
+                      if (!item.children) setIsMobileMenuOpen(false)
+                    }}
                   >
                     {item.label}
-                  </a>
+                  </button>
                   {item.children && (
                     <div className="ml-4 mt-1 space-y-1">
                       {item.children.map((child) => (
-                        <a
+                        <button
+                          type="button"
                           key={child.label}
-                          href={child.href}
                           className="block px-4 py-2 text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg"
-                          onClick={() => setIsMobileMenuOpen(false)}
+                          onClick={() => {
+                            goTo(child.href)
+                            setIsMobileMenuOpen(false)
+                          }}
                         >
                           {child.label}
-                        </a>
+                        </button>
                       ))}
                     </div>
                   )}

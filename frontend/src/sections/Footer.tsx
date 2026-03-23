@@ -14,6 +14,8 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAccessibility } from '@/context/AccessibilityContext'
+import { goToSection } from '@/lib/navigation'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const footerLinks = {
   servicios: [
@@ -49,6 +51,17 @@ const socialLinks = [
 
 export function Footer() {
   const { highContrast, toggleHighContrast, largeText, toggleLargeText } = useAccessibility()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const goTo = (href: string) => {
+    if (href.startsWith('#')) {
+      goToSection(href, navigate, pathname)
+      return
+    }
+
+    navigate(href)
+  }
 
   return (
     <footer className="bg-slate-900 text-slate-300">
@@ -134,9 +147,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.servicios.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -147,9 +166,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.municipalidad.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -160,9 +185,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {footerLinks.comunidad.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-slate-400 hover:text-white transition-colors">
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link to={link.href} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => goTo(link.href)} className="text-slate-400 hover:text-white transition-colors">
+                      {link.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -177,15 +208,15 @@ export function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-500">
               <span>© 2026 Municipalidad de Roque Pérez</span>
               <span className="hidden md:inline">|</span>
-              <a href="#terminos" className="hover:text-slate-300 transition-colors">
+              <button type="button" onClick={() => goTo('#terminos')} className="hover:text-slate-300 transition-colors">
                 Términos
-              </a>
-              <a href="#privacidad" className="hover:text-slate-300 transition-colors">
+              </button>
+              <button type="button" onClick={() => goTo('#privacidad')} className="hover:text-slate-300 transition-colors">
                 Privacidad
-              </a>
-              <a href="#accesibilidad" className="hover:text-slate-300 transition-colors">
+              </button>
+              <button type="button" onClick={() => goTo('#accesibilidad')} className="hover:text-slate-300 transition-colors">
                 Accesibilidad
-              </a>
+              </button>
             </div>
 
             {/* Social Links */}
