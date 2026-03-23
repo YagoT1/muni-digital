@@ -43,6 +43,7 @@ import EmployeeLayout from './layouts/EmployeeLayout'
 import MainLayout from './layouts/MainLayout'
 import OperatorLayout from './layouts/OperatorLayout'
 import HomePage from './pages/HomePage'
+import HealthPage from './pages/HealthPage'
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -77,6 +78,7 @@ function App() {
         <Route path="noticias" element={<NewsPage />} />
         <Route path="noticias/:id" element={<NewsDetailPage />} />
         <Route path="eventos" element={<EventsPage />} />
+        <Route path="salud" element={<HealthPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={['ciudadano']} />}>

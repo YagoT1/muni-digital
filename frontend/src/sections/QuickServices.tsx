@@ -14,7 +14,7 @@ const services = [
     icon: Hospital,
     title: 'Salud',
     description: 'Centros de salud, vacunación y programas de bienestar para todos los vecinos.',
-    href: '/tramites',
+    href: '/salud',
     color: 'bg-rose-50 text-rose-600',
     gradient: 'from-rose-500 to-rose-600',
   },
