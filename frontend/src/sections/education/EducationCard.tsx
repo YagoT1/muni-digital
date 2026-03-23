@@ -18,6 +18,7 @@ type EducationCardProps = {
   type: EducationCardType
   address?: string
   isRural?: boolean
+  viewMoreTo?: string
 }
 
 const typeLabel: Record<EducationCardType, string> = {
@@ -30,17 +31,28 @@ const typeLabel: Record<EducationCardType, string> = {
   complementario: 'Complementario',
 }
 
-function buildMapsLink(address: string) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+function openMaps(address: string) {
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+  window.open(mapsUrl, '_blank', 'noopener,noreferrer')
 }
 
-export function EducationCard({ name, type, address, isRural = false }: EducationCardProps) {
+export function EducationCard({
+  name,
+  type,
+  address,
+  isRural = false,
+  viewMoreTo = '/educacion',
+}: EducationCardProps) {
   return (
     <Card className="h-full">
       <CardHeader className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <Badge variant="outline">{typeLabel[type]}</Badge>
-          {isRural ? <TreePine className="h-5 w-5 text-emerald-600" /> : <Building2 className="h-5 w-5 text-muni-600" />}
+          {isRural ? (
+            <TreePine className="h-5 w-5 text-emerald-600" />
+          ) : (
+            <Building2 className="h-5 w-5 text-muni-600" />
+          )}
         </div>
         <CardTitle>{name}</CardTitle>
         <CardDescription className="flex items-center gap-2">
@@ -56,14 +68,12 @@ export function EducationCard({ name, type, address, isRural = false }: Educatio
       </CardHeader>
       <CardFooter className="flex flex-wrap gap-2">
         {address ? (
-          <Button variant="outline" asChild>
-            <a href={buildMapsLink(address)} target="_blank" rel="noopener noreferrer">
-              Cómo llegar
-            </a>
+          <Button type="button" variant="outline" onClick={() => openMaps(address)}>
+            Cómo llegar
           </Button>
         ) : null}
         <Button asChild>
-          <Link to="/educacion">Ver más</Link>
+          <Link to={viewMoreTo}>Ver más</Link>
         </Button>
       </CardFooter>
     </Card>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { EducationCard } from './EducationCard'
 import { Button } from '@/components/ui/button'
-import { EducationFilter, type EducationFilterValue } from './EducationFilter'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { LoadingState } from '@/components/ui/LoadingState'
+import { EducationCard } from './EducationCard'
+import { EducationFilter, type EducationFilterValue } from './EducationFilter'
 
 type EducationCenter = {
   id: string
@@ -18,7 +19,12 @@ type EducationCenter = {
 
 const educationCenters: EducationCenter[] = [
   { id: 'eem-1', name: 'EEM Nº1', type: 'secundario', category: 'formal' },
-  { id: 'eest-1', name: 'EEST Nº1 “René Favaloro”', type: 'tecnico', category: 'formal' },
+  {
+    id: 'eest-1',
+    name: 'EEST Nº1 “René Favaloro”',
+    type: 'tecnico',
+    category: 'formal',
+  },
   {
     id: 'ep-20',
     name: 'Escuela Primaria Nº20 Bernardino Rivadavia',
@@ -59,6 +65,15 @@ const educationCenters: EducationCenter[] = [
 
 function matchesFilter(center: EducationCenter, filter: EducationFilterValue) {
   if (filter === 'all') return true
+
+  if (filter === 'especial') {
+    return center.type === 'especial'
+  }
+
+  if (filter === 'adultos') {
+    return center.type === 'adultos'
+  }
+
   return center.type === filter
 }
 
@@ -81,13 +96,14 @@ export function EducationSection() {
     (item) => item.type === 'secundario' || item.type === 'tecnico',
   )
 
+  const technicalFeatured = secondaryAndTechnical.find((item) => item.id === 'eest-1')
+  const secondaryRegular = secondaryAndTechnical.filter((item) => item.id !== 'eest-1')
+
   const inclusiveAndComplementary = filtered.filter(
     (item) => item.category === 'inclusivo' || item.category === 'complementario',
   )
 
-  if (loading) {
-    return <LoadingState text="Cargando oferta educativa..." />
-  }
+  if (loading) return <LoadingState text="Cargando oferta educativa..." />
 
   if (filtered.length === 0) {
     return <EmptyState message="No hay instituciones para el filtro seleccionado." />
@@ -129,17 +145,37 @@ export function EducationSection() {
         {secondaryAndTechnical.length > 0 ? (
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-slate-900">Educación Secundaria y Técnica</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {secondaryAndTechnical.map((center) => (
-                <EducationCard
-                  key={center.id}
-                  name={center.name}
-                  type={center.type}
-                  address={center.address}
-                  isRural={center.isRural}
-                />
-              ))}
-            </div>
+
+            {technicalFeatured ? (
+              <Card className="border-muni-200 shadow-soft-md">
+                <CardHeader>
+                  <CardTitle className="text-xl">Institución técnica destacada</CardTitle>
+                  <CardDescription>Formación técnica orientada a la inserción laboral local.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <EducationCard
+                    name={technicalFeatured.name}
+                    type={technicalFeatured.type}
+                    address={technicalFeatured.address}
+                    isRural={technicalFeatured.isRural}
+                  />
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {secondaryRegular.length > 0 ? (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {secondaryRegular.map((center) => (
+                  <EducationCard
+                    key={center.id}
+                    name={center.name}
+                    type={center.type}
+                    address={center.address}
+                    isRural={center.isRural}
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : null}
 
