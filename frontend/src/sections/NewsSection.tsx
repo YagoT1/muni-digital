@@ -1,5 +1,6 @@
 import { Calendar, ArrowRight, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Link } from 'react-router-dom'
 
 const news = [
   {
@@ -65,21 +66,21 @@ export function NewsSection() {
               Últimas noticias
             </h2>
           </div>
-          <a
-            href="/noticias"
+          <Link
+            to="/noticias"
             className="inline-flex items-center gap-2 text-muni-600 hover:text-muni-700 font-medium transition-colors"
           >
             Ver todas
             <ArrowRight className="h-5 w-5" />
-          </a>
+          </Link>
         </div>
 
         {/* News Grid */}
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Featured News */}
           {featuredNews && (
-            <a
-              href={`/noticias/${featuredNews.id}`}
+            <Link
+              to={`/noticias/${featuredNews.id}`}
               className="group relative overflow-hidden rounded-2xl bg-slate-50 hover:bg-slate-100 transition-all duration-300"
             >
               {/* Image placeholder */}
@@ -119,15 +120,15 @@ export function NewsSection() {
                   <span>{featuredNews.author}</span>
                 </div>
               </div>
-            </a>
+            </Link>
           )}
 
           {/* Other News List */}
           <div className="space-y-4">
             {otherNews.map((item) => (
-              <a
+              <Link
                 key={item.id}
-                href={`/noticias/${item.id}`}
+                to={`/noticias/${item.id}`}
                 className="group flex gap-4 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-all duration-300"
               >
                 {/* Thumbnail */}
@@ -157,7 +158,7 @@ export function NewsSection() {
                 <ArrowRight 
                   className="h-5 w-5 text-slate-300 group-hover:text-muni-500 group-hover:translate-x-1 transition-all flex-shrink-0 self-center" 
                 />
-              </a>
+              </Link>
             ))}
           </div>
         </div>

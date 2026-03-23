@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { LoadingState } from '@/components/ui/LoadingState'
 import { AdminUserForm } from './AdminUserForm'
 import {
   getUserById,
@@ -47,8 +49,8 @@ export default function AdminUserEditPage() {
     navigate(`/admin/usuarios/${id}`)
   }
 
-  if (error) return <div className="text-red-600">{error}</div>
-  if (!initial) return <div>Cargando usuario...</div>
+  if (error) return <ErrorState message={error} />
+  if (!initial) return <LoadingState text="Cargando usuario..." />
 
   return (
     <div className="bg-white rounded-xl border p-6 space-y-4">

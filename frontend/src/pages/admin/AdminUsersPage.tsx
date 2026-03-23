@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { ActionDialog } from '@/components/ui/ActionDialog'
 import {
   listUsers,
   resetUserPassword,
@@ -25,6 +29,9 @@ export default function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState('')
   const [resetMessage, setResetMessage] = useState<string | null>(null)
+  const [resetDialogOpen, setResetDialogOpen] = useState(false)
+  const [resetTargetId, setResetTargetId] = useState<number | null>(null)
+  const [newPassword, setNewPassword] = useState('')
 
   const load = async () => {
     try {
@@ -85,13 +92,25 @@ export default function AdminUsersPage() {
     }
   }
 
-  const onResetPassword = async (id: number) => {
+  const openResetDialog = (id: number) => {
+    setResetTargetId(id)
+    setNewPassword('')
+    setResetDialogOpen(true)
+  }
+
+  const onResetPassword = async () => {
+    if (!resetTargetId) return
     try {
-      setBusyId(id)
-      const input = window.prompt('Ingresá la nueva contraseña (mínimo 8 caracteres, incluir letras y números):')
-      if (!input) return
-      const res = await resetUserPassword(id, input)
+      setBusyId(resetTargetId)
+      const value = newPassword.trim()
+      if (value.length < 8) {
+        setError('La nueva contraseña debe tener al menos 8 caracteres.')
+        return
+      }
+
+      const res = await resetUserPassword(resetTargetId, value)
       setResetMessage(res.message)
+      setResetDialogOpen(false)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo resetear password')
     } finally {
@@ -99,7 +118,15 @@ export default function AdminUsersPage() {
     }
   }
 
-  if (loading) return <div className="p-6">Cargando usuarios...</div>
+  if (loading) return <LoadingState text="Cargando usuarios..." />
+
+  if (error && users.length === 0) {
+    return <ErrorState message={error} />
+  }
+
+  if (!loading && users.length === 0) {
+    return <EmptyState message="No hay usuarios para mostrar." />
+  }
 
   return (
     <div className="space-y-4">
@@ -168,7 +195,7 @@ export default function AdminUsersPage() {
                       <Button asChild size="sm" variant="outline">
                         <Link to={`/admin/usuarios/${u.id}/editar`}>Editar</Link>
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => onResetPassword(u.id)} disabled={busy}>
+                      <Button size="sm" variant="outline" onClick={() => openResetDialog(u.id)} disabled={busy}>
                         Reset PW
                       </Button>
                     </div>
@@ -185,6 +212,23 @@ export default function AdminUsersPage() {
           {resetMessage}
         </div>
       )}
+
+      <ActionDialog
+        open={resetDialogOpen}
+        onOpenChange={setResetDialogOpen}
+        title="Resetear contraseña"
+        description="Ingresá una nueva contraseña para el usuario seleccionado."
+        confirmLabel="Resetear"
+        loading={busyId === resetTargetId && resetTargetId !== null}
+        onConfirm={onResetPassword}
+      >
+        <Input
+          type="password"
+          placeholder="Nueva contraseña"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+      </ActionDialog>
     </div>
   )
 }
