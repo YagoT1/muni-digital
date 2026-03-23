@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { LoadingState } from '@/components/ui/LoadingState'
 import { getUserById } from '../../services/adminUsersService'
 import type { UserSafe } from '../../services/adminUsersService'
 
@@ -21,8 +23,8 @@ export default function AdminUserDetailPage() {
     load()
   }, [id])
 
-  if (error) return <div className="text-red-600">{error}</div>
-  if (!user) return <div>Cargando...</div>
+  if (error) return <ErrorState message={error} />
+  if (!user) return <LoadingState text="Cargando usuario..." />
 
   return (
     <div className="bg-white rounded-xl border p-6 space-y-3">
