@@ -28,6 +28,13 @@ export enum DocumentType {
   OTRO = 'OTRO',
 }
 
+export enum UserArea {
+  PRENSA = 'PRENSA',
+  SALUD = 'SALUD',
+  EDUCACION = 'EDUCACION',
+  ADMIN = 'ADMIN',
+}
+
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
@@ -96,6 +103,9 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CIUDADANO })
   role: UserRole
+
+  @Column({ type: 'enum', enum: UserArea, default: UserArea.ADMIN })
+  area: UserArea
 
   // Solo empleado
   @Column({ type: 'varchar', length: 50, nullable: true })
