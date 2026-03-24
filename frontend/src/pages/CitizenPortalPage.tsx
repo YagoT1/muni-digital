@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { apiFetch } from '../services/api'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
 
 type Me = {
   id: number
@@ -11,16 +13,22 @@ type Me = {
 
 export default function CitizenPortalPage() {
   const [user, setUser] = useState<Me | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadUser = async () => {
-      const data = await apiFetch<Me>('/auth/me')
-      setUser(data)
+      try {
+        const data = await apiFetch<Me>('/auth/me')
+        setUser(data)
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'No se pudo cargar el perfil del ciudadano.')
+      }
     }
     loadUser()
   }, [])
 
-  if (!user) return <div className="p-6">Cargando...</div>
+  if (error) return <ErrorState message={error} />
+  if (!user) return <LoadingState text="Cargando portal ciudadano..." />
 
   return (
     <div className="space-y-6">

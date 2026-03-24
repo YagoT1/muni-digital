@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
@@ -7,12 +7,18 @@ const links = [
   { to: '/admin/usuarios', label: 'Usuarios' },
   { to: '/admin/turnos', label: 'Turnos' },
   { to: '/admin/pagos', label: 'Pagos' },
+  { to: '/admin/notifications', label: 'Notificaciones' },
 ]
 
 export default function AdminLayout() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const currentModule = links.find((link) => pathname === link.to || pathname.startsWith(`${link.to}/`))?.label ?? 'Panel'
+
   const handleLogout = () => {
     logout()
-    window.location.replace('/portal?tab=login')
+    navigate('/portal?tab=login', { replace: true })
   }
 
   return (
@@ -21,16 +27,23 @@ export default function AdminLayout() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold">Panel Administrativo</h1>
-            <p className="text-xs text-muted-foreground">Gestión centralizada del municipio</p>
+            <p className="text-xs text-muted-foreground">Módulo actual: {currentModule}</p>
+            <div className="mt-1 text-xs text-slate-400">Inicio / Admin / {currentModule}</div>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Cerrar sesión
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <Link to="/">Inicio</Link>
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              Cerrar sesión
+            </Button>
+          </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-[220px,1fr] gap-6">
         <aside className="bg-white rounded-xl border p-3 h-fit">
+          <h2 className="px-3 pb-2 text-xs uppercase tracking-wide text-slate-400">Navegación</h2>
           <nav className="space-y-1">
             {links.map((link) => (
               <NavLink

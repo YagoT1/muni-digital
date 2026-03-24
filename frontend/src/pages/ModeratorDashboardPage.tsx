@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../services/api'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ type MeResponse = {
 }
 
 export default function ModeratorDashboardPage() {
+  const navigate = useNavigate()
   const [user, setUser] = useState<MeResponse | null>(null)
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function ModeratorDashboardPage() {
 
   const handleLogout = () => {
     logout()
-    window.location.replace('/')
+    navigate('/', { replace: true })
   }
 
   if (!user) return <div className="p-10">Cargando...</div>

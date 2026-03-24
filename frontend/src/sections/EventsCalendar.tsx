@@ -3,6 +3,7 @@ import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Bell } from 'lucid
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Link } from 'react-router-dom'
 
 const events = [
   { id: 1, title: 'Carnavales 2026', date: '15 de febrero', time: '21:00 hs.', location: 'Plaza Central', category: 'Cultura', description: 'Las tradicionales noches de carnaval con comparsas y música en vivo.' },
@@ -64,7 +65,7 @@ export function EventsCalendar() {
                         <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{event.location}</span>
                       </div>
                     </div>
-                    <a href="/eventos" className="inline-flex items-center text-sm flex-shrink-0 text-muni-600 hover:text-muni-700">Ver detalle<ArrowRight className="ml-1 h-4 w-4" /></a>
+                    <Link to="/eventos" className="inline-flex items-center text-sm flex-shrink-0 text-muni-600 hover:text-muni-700">Ver detalle<ArrowRight className="ml-1 h-4 w-4" /></Link>
                   </div>
                 </div>
               ))}

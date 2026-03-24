@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
 import { ClaimsModule } from './claims/claims.module'
+import { NotificationsModule } from './notifications/notifications.module'
+import { NewsModule } from './news/news.module'
 import { SecurityHeadersMiddleware } from './security/security-headers.middleware'
 import { RateLimitMiddleware } from './security/rate-limit.middleware'
 
@@ -85,6 +87,8 @@ function validateEnv(env: EnvVars) {
     UsersModule,
     AuthModule,
     ClaimsModule,
+    NotificationsModule,
+    NewsModule,
   ],
 })
 export class AppModule implements NestModule {

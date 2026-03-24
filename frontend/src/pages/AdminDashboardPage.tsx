@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 import { getAdminStats } from '../services/adminUsersService'
 import type { AdminStats } from '../services/adminUsersService'
 import { Button } from '@/components/ui/button'
+import { LoadingState } from '@/components/ui/LoadingState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 const roleOrder = ['admin', 'operador', 'moderador', 'empleado', 'ciudadano'] as const
 
@@ -33,7 +36,11 @@ export default function AdminDashboardPage() {
     }))
   }, [stats])
 
-  if (loading) return <div className="p-6">Cargando dashboard...</div>
+  if (loading) return <LoadingState text="Cargando dashboard..." />
+
+  if (error && !stats) return <ErrorState message={error} />
+
+  if (!stats) return <EmptyState message="No hay métricas disponibles por el momento." />
 
   return (
     <div className="space-y-6">
