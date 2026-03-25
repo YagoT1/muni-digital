@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateNewsDto } from './dto/create-news.dto'
@@ -27,20 +23,7 @@ export class NewsService {
     return user.area === UserArea.PRENSA
   }
 
-  private canCreate(user: RequestUser) {
-    if (this.isAdmin(user)) return true
-    return user.role === UserRole.EMPLEADO && this.isPrensa(user)
-  }
-
-  private canPublish(user: RequestUser) {
-    return this.isAdmin(user) || this.isPrensa(user)
-  }
-
   async create(dto: CreateNewsDto, user: RequestUser): Promise<News> {
-    if (!this.canCreate(user)) {
-      throw new ForbiddenException('No tenés permisos para crear noticias')
-    }
-
     const news = this.newsRepo.create({
       title: dto.title,
       summary: dto.summary,
@@ -64,7 +47,7 @@ export class NewsService {
     }
 
     if (dto.isPublished !== undefined && dto.isPublished !== news.isPublished) {
-      if (!this.canPublish(user)) {
+      if (!this.isAdmin(user) && !this.isPrensa(user)) {
         throw new ForbiddenException('No tenés permisos para publicar noticias')
       }
       news.isPublished = dto.isPublished
@@ -85,15 +68,21 @@ export class NewsService {
     })
   }
 
-  async findOne(id: number, user?: RequestUser): Promise<News> {
+  async findOne(id: number): Promise<News> {
+    const news = await this.newsRepo.findOne({ where: { id, isPublished: true } })
+    if (!news) throw new NotFoundException('Noticia no encontrada')
+    return news
+  }
+
+  async findOnePreview(id: number, user: RequestUser): Promise<News> {
     const news = await this.newsRepo.findOne({ where: { id } })
     if (!news) throw new NotFoundException('Noticia no encontrada')
 
     if (news.isPublished) return news
 
-    const isAuthor = user && news.authorId === user.id
-    if (isAuthor || (user && this.isAdmin(user))) return news
+    const isAuthor = news.authorId === user.id
+    if (isAuthor || this.isAdmin(user)) return news
 
-    throw new NotFoundException('Noticia no encontrada')
+    throw new ForbiddenException('No tenés permisos para ver esta noticia')
   }
 }
