@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Search, Menu, X, User, Sun } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
 import {
   NavigationMenu,
@@ -118,7 +118,7 @@ export function Header() {
       <div className="container-modern py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="w-11 h-11 bg-gradient-to-br from-muni-500 to-muni-600 rounded-xl flex items-center justify-center text-white font-bold text-lg group-hover:shadow-soft-md transition-shadow">
               RP
             </div>
@@ -130,7 +130,7 @@ export function Header() {
                 Roque Pérez
               </p>
             </div>
-          </a>
+          </Link>
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-md relative">
