@@ -50,29 +50,6 @@ export type UserFormPayload = {
   isVerified?: boolean
 }
 
-export type AdminStats = {
-  total: number
-  active: number
-  inactive: number
-  byRole: Record<string, number>
-}
-
-export type UserFormPayload = {
-  firstName?: string
-  lastName?: string
-  dni?: string
-  birthDate?: string
-  email: string
-  password?: string
-  country: string
-  province: string
-  city: string
-  phone?: string
-  legajo?: string
-  role?: UserRole
-  isActive?: boolean
-  isVerified?: boolean
-}
 
 export async function listUsers(params?: {
   page?: number

@@ -30,7 +30,8 @@ export default function AdminUsersPage() {
     try {
       setLoading(true)
       setError(null)
-      setUsers(await listUsers())
+      const response = await listUsers()
+      setUsers(Array.isArray(response) ? response : response.items)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo cargar la lista')
     } finally {
