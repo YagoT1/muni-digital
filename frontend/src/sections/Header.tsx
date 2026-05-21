@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Search, Menu, X, User, Sun } from 'lucide-react'
+<<<<<<< HEAD
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+=======
+import { Link, useNavigate } from 'react-router-dom'
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 import { Input } from '@/components/ui/input'
 import { goToSection } from '@/lib/navigation'
 import {

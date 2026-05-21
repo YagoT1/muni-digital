@@ -51,6 +51,7 @@ export type UserFormPayload = {
   isVerified?: boolean
 }
 
+<<<<<<< HEAD
 function isUserSafe(value: unknown): value is UserSafe {
   if (!value || typeof value !== 'object') return false
   const v = value as Record<string, unknown>
@@ -74,6 +75,8 @@ function isAdminStats(value: unknown): value is AdminStats {
     typeof v.byRole === 'object'
   )
 }
+=======
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 
 export async function listUsers(params?: {
   page?: number

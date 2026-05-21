@@ -1,6 +1,10 @@
 import { apiFetch } from './api'
 
+<<<<<<< HEAD
 const TOKEN_KEY = 'access_token'
+=======
+const TOKEN_KEY = 'md_access_token'
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 
 type JwtPayload = {
   sub?: number
@@ -123,10 +127,35 @@ export async function login(email: string, password: string) {
     skipAuth: true,
   })
 
+<<<<<<< HEAD
   assertAccessTokenResponse(data)
   setToken(data.access_token)
   return data
 }
+=======
+function toRegisterPayload(
+  payloadOrDni: RegisterPayload | string,
+  email?: string,
+  password?: string,
+  legajo?: string,
+): RegisterPayload {
+  if (typeof payloadOrDni !== 'string') return payloadOrDni
+
+  return {
+    dni: payloadOrDni.trim(),
+    email: (email ?? '').trim(),
+    password: password ?? '',
+    legajo,
+    firstName: 'Usuario',
+    lastName: 'Portal',
+    birthDate: '1990-01-01',
+    country: 'AR',
+    province: 'Buenos Aires',
+    city: 'Roque Pérez',
+  }
+}
+
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 
 export async function register(
   payloadOrDni: RegisterPayload | string,

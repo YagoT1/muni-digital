@@ -13,10 +13,7 @@ function getCorsOrigins() {
 
 function shouldRunSeedAdmin() {
   const value = (process.env.SEED_ADMIN_ON_BOOT ?? '').trim().toLowerCase()
-  if (value === 'true') return true
-  if (value === 'false') return false
-
-  return process.env.NODE_ENV !== 'production'
+  return value === 'true'
 }
 
 async function bootstrap() {
@@ -54,7 +51,7 @@ async function bootstrap() {
       logger.warn(`[seedAdmin] failed: ${message}`)
     }
   } else {
-    logger.log('[seedAdmin] skipped (SEED_ADMIN_ON_BOOT=false)')
+    logger.log('[seedAdmin] skipped (set SEED_ADMIN_ON_BOOT=true to enable)')
   }
 
   await app.listen(process.env.PORT ?? 3000)

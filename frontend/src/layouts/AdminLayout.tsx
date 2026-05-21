@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+=======
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
@@ -12,10 +16,13 @@ const links = [
 
 export default function AdminLayout() {
   const navigate = useNavigate()
+<<<<<<< HEAD
   const { pathname } = useLocation()
 
   const currentModule = links.find((link) => pathname === link.to || pathname.startsWith(`${link.to}/`))?.label ?? 'Panel'
 
+=======
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
   const handleLogout = () => {
     logout()
     navigate('/portal?tab=login', { replace: true })

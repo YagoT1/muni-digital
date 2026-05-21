@@ -38,11 +38,15 @@ export default function AdminUsersPage() {
       setLoading(true)
       setError(null)
       const response = await listUsers()
+<<<<<<< HEAD
       if (Array.isArray(response)) {
         setUsers(response)
       } else {
         setUsers(response.items)
       }
+=======
+      setUsers(Array.isArray(response) ? response : response.items)
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo cargar la lista')
     } finally {

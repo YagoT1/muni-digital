@@ -1,16 +1,20 @@
-import { 
-  TrendingUp, 
-  FileText, 
-  Building, 
-  Users, 
-  ArrowRight, 
+import {
+  TrendingUp,
+  FileText,
+  Building,
+  Users,
+  ArrowRight,
   Download,
   ExternalLink,
-  BarChart3
+  BarChart3,
 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+<<<<<<< HEAD
 import { goToSection } from '@/lib/navigation'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+=======
+import { Link } from 'react-router-dom'
+>>>>>>> d2d0fe3277fb2ea398994fc02c04b7be2255cd19
 
 const transparencyData = [
   {
