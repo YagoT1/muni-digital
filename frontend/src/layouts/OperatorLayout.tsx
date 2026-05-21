@@ -1,8 +1,9 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout } from '../services/authService'
 import { Button } from '@/components/ui/button'
 
 export default function OperatorLayout() {
+  const navigate = useNavigate()
   const links = [
     { to: '/operador', label: 'Dashboard' },
     { to: '/operador/ciudadanos', label: 'Ciudadanos' },
@@ -12,7 +13,7 @@ export default function OperatorLayout() {
 
   const handleLogout = () => {
     logout()
-    window.location.replace('/portal?tab=login')
+    navigate('/portal?tab=login', { replace: true })
   }
 
   return (
@@ -24,7 +25,7 @@ export default function OperatorLayout() {
             <p className="text-xs text-muted-foreground">Operación diaria sin privilegios admin</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.location.replace('/')}>
+            <Button variant="outline" onClick={() => navigate('/', { replace: true })}>
               Inicio público
             </Button>
             <Button variant="outline" onClick={handleLogout}>
