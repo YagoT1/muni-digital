@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -64,7 +65,7 @@ export function EventsCalendar() {
                         <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{event.location}</span>
                       </div>
                     </div>
-                    <a href="/eventos" className="inline-flex items-center text-sm flex-shrink-0 text-muni-600 hover:text-muni-700">Ver detalle<ArrowRight className="ml-1 h-4 w-4" /></a>
+                    <Link to="/eventos" className="inline-flex items-center text-sm flex-shrink-0 text-muni-600 hover:text-muni-700">Ver detalle<ArrowRight className="ml-1 h-4 w-4" /></Link>
                   </div>
                 </div>
               ))}

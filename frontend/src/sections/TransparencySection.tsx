@@ -1,14 +1,15 @@
-import { 
-  TrendingUp, 
-  FileText, 
-  Building, 
-  Users, 
-  ArrowRight, 
+import {
+  TrendingUp,
+  FileText,
+  Building,
+  Users,
+  ArrowRight,
   Download,
   ExternalLink,
-  BarChart3
+  BarChart3,
 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+import { Link } from 'react-router-dom'
 
 const transparencyData = [
   {
@@ -79,9 +80,9 @@ export function TransparencySection() {
         {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {transparencyData.map((item) => (
-            <a
+            <Link
               key={item.title}
-              href={item.link}
+              to={item.link}
               className="group bg-slate-50 rounded-2xl p-6 hover:bg-slate-100 transition-all duration-300"
             >
               <div className="flex items-start justify-between mb-4">
@@ -97,7 +98,7 @@ export function TransparencySection() {
                 <span className="text-xs text-slate-400">{item.detail}</span>
                 <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-muni-500 group-hover:translate-x-1 transition-all" />
               </div>
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -120,27 +121,27 @@ export function TransparencySection() {
                 sobre presupuesto, obras, contrataciones y más en CSV, JSON o Excel.
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href="/transparencia" className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-muni-700 hover:bg-white/90 gap-2">
+                <Link to="/transparencia" className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-muni-700 hover:bg-white/90 gap-2">
                   <Download className="h-4 w-4" />
                   Descargar datos
-                </a>
-                <a href="/transparencia" className="inline-flex items-center rounded-md border border-white/30 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 gap-2">
+                </Link>
+                <Link to="/transparencia" className="inline-flex items-center rounded-md border border-white/30 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 gap-2">
                   <ExternalLink className="h-4 w-4" />
                   Ver API
-                </a>
+                </Link>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {openDataLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="flex items-center gap-2 p-3 bg-white/10 rounded-xl hover:bg-white/15 transition-colors text-sm backdrop-blur-sm"
                 >
                   <Download className="h-4 w-4 flex-shrink-0 opacity-70" />
                   <span>{link.label}</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
