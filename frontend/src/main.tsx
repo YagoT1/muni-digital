@@ -5,7 +5,7 @@ import App from './App'
 import './index.css'
 import { AccessibilityProvider } from './context/AccessibilityContext'
 import './lib/sentry';
-
+throw new Error('Sentry frontend test');
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AccessibilityProvider>
