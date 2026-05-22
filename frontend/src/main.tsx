@@ -7,7 +7,7 @@ import './index.css'
 import { AccessibilityProvider } from './context/AccessibilityContext'
   
 setTimeout(() => {
-  trhow new Error('Sentry frontend test')
+  throw new Error('Sentry frontend test')
 }, 3000);
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
