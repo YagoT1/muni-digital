@@ -78,7 +78,7 @@ export function Hero() {
             </div>
             
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="flex flex-wrap gap-4 animate-fade-in text-black/80" style={{ animationDelay: '0.2s' }}>
               <button
                 type="button"
                 className="btn-secondary"
@@ -101,15 +101,6 @@ export function Hero() {
               >
                 Portal Ciudadano
               </a>
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  throw new Error('Sentry frontend production test')
-                }}
-              >
-                Test Sentry
-              </button>
             </div>
             
             {/* Stats - Minimalist */}
