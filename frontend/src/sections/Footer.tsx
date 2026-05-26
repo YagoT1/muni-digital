@@ -186,6 +186,8 @@ export function Footer() {
               <a href="#accesibilidad" className="hover:text-slate-300 transition-colors">
                 Accesibilidad
               </a>
+              </div>
+              <div>
               <a href="">
               <button
                 type="button"
