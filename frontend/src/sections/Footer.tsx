@@ -186,6 +186,15 @@ export function Footer() {
               <a href="#accesibilidad" className="hover:text-slate-300 transition-colors">
                 Accesibilidad
               </a>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  throw new Error('Sentry frontend production test')
+                }}
+              >
+                Test Sentry (Temporal)
+              </button>
             </div>
 
             {/* Social Links */}
