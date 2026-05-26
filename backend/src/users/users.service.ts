@@ -107,6 +107,23 @@ export class UsersService {
     return users.map((user) => this.toSafe(user))
   }
 
+  async findPaginatedSafe(page = 1, limit = 20) {
+    const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1
+    const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 20
+    const [users, total] = await this.usersRepo.findAndCount({
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
+      order: { id: 'DESC' },
+    })
+
+    return {
+      items: users.map((user) => this.toSafe(user)),
+      total,
+      page: safePage,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
+    }
+  }
+
   async getAdminStats() {
     const users = await this.findAll()
     const total = users.length
