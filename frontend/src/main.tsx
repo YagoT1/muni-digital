@@ -5,10 +5,6 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
 import { AccessibilityProvider } from './context/AccessibilityContext'
-  
-setTimeout(() => {
-  throw new Error('Sentry frontend test')
-}, 3000);
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

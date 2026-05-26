@@ -39,6 +39,7 @@ const stats = [
 
 export function Hero() {
   return (
+    
     <section id="inicio" className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background with gradient and subtle pattern */}
       <div className="absolute inset-0 z-0">
