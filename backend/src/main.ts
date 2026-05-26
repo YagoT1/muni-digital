@@ -3,6 +3,7 @@ import { AppModule } from './app.module'
 import { ValidationPipe, Logger } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { seedAdmin } from './seed/seed-admin'
+import cookieParser from 'cookie-parser'
 
 function getCorsOrigins() {
   return (process.env.CORS_ORIGINS ?? '')
@@ -33,6 +34,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
+  app.use(cookieParser())
 
   app.useGlobalPipes(
     new ValidationPipe({

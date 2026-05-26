@@ -4,6 +4,11 @@ import { ConfigService } from '@nestjs/config'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { UsersService } from '../../users/users.service'
 import { UserRole } from '../../users/user.entity'
+import type { Request } from 'express'
+
+const cookieExtractor = (req: Request): string | null => {
+  return req?.cookies?.access_token ?? null
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
