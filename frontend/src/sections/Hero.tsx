@@ -92,6 +92,15 @@ export function Hero() {
               >
                 Portal Ciudadano
               </a>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  throw new Error('Sentry frontend production test')
+                }}
+              >
+                Test Sentry
+              </button>
             </div>
             
             {/* Stats - Minimalist */}
