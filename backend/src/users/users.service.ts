@@ -5,6 +5,16 @@ import { User, UserRole } from './user.entity'
 import * as bcrypt from 'bcrypt'
 import { CreateAdminUserDto } from './dto/create-admin-user.dto'
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto'
+import { CreateUserService } from './use-cases/create-user.service'
+import { UpdateUserService } from './use-cases/update-user.service'
+import { ResetPasswordService } from './use-cases/reset-password.service'
+import { UserStatsService } from './use-cases/user-stats.service'
+import {
+  normalizeCuil,
+  normalizeDocumentNumber,
+  normalizeEmail,
+  normalizeText,
+} from './users.utils'
 
 @Injectable()
 export class UsersService {
@@ -95,6 +105,23 @@ export class UsersService {
   async findAllSafe() {
     const users = await this.findAll()
     return users.map((user) => this.toSafe(user))
+  }
+
+  async findPaginatedSafe(page = 1, limit = 20) {
+    const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1
+    const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 20
+    const [users, total] = await this.usersRepo.findAndCount({
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
+      order: { id: 'DESC' },
+    })
+
+    return {
+      items: users.map((user) => this.toSafe(user)),
+      total,
+      page: safePage,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
+    }
   }
 
   async getAdminStats() {
