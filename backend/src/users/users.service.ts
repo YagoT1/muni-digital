@@ -5,6 +5,16 @@ import { User, UserRole } from './user.entity'
 import * as bcrypt from 'bcrypt'
 import { CreateAdminUserDto } from './dto/create-admin-user.dto'
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto'
+import { CreateUserService } from './use-cases/create-user.service'
+import { UpdateUserService } from './use-cases/update-user.service'
+import { ResetPasswordService } from './use-cases/reset-password.service'
+import { UserStatsService } from './use-cases/user-stats.service'
+import {
+  normalizeCuil,
+  normalizeDocumentNumber,
+  normalizeEmail,
+  normalizeText,
+} from './users.utils'
 
 @Injectable()
 export class UsersService {
