@@ -187,19 +187,6 @@ export function Footer() {
                 Accesibilidad
               </a>
               </div>
-              <div>
-              <a href="">
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  throw new Error('Sentry frontend production test')
-                }}
-              >
-                Test Sentry (Temporal)
-              </button>
-              </a>
-            </div>
 
             {/* Social Links */}
             <div className="flex items-center gap-2">
