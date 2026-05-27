@@ -7,7 +7,7 @@ import { UserRole } from '../../users/user.entity'
 import type { Request } from 'express'
 
 const cookieExtractor = (req: Request): string | null => {
-  return req?.cookies?.access_token ?? null
+  return req?.cookies?.md_access_token ?? req?.cookies?.access_token ?? null
 }
 
 @Injectable()
