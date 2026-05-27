@@ -1,15 +1,5 @@
 import { apiFetch } from './api'
 
-const TOKEN_KEY = 'md_access_token'
-
-type JwtPayload = {
-  sub?: number
-  email?: string
-  role?: string
-  exp?: number
-  iat?: number
-}
-
 export type RegisterPayload = {
   firstName?: string
   lastName?: string
@@ -23,39 +13,17 @@ export type RegisterPayload = {
   legajo?: string
 }
 
-function base64UrlDecode(input: string) {
-  const base64 = input.replace(/-/g, '+').replace(/_/g, '/')
-  const pad = base64.length % 4
-  const padded = pad ? base64 + '='.repeat(4 - pad) : base64
-
-  return decodeURIComponent(
-    atob(padded)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join(''),
-  )
-}
-
 export function getToken(): string | null {
+  // Flujo canónico: cookie httpOnly gestionada por backend.
   return null
 }
 
-export function setToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token)
+export function setToken(_token: string) {
+  // Compat legacy intencional: no persistimos JWT en localStorage.
 }
 
 export async function logout() {
   await apiFetch('/auth/logout', { method: 'POST' })
-}
-
-export function decodeToken(token: string): JwtPayload | null {
-  try {
-    const [, payload] = token.split('.')
-    if (!payload) return null
-    return JSON.parse(base64UrlDecode(payload)) as JwtPayload
-  } catch {
-    return null
-  }
 }
 
 export function isTokenValid(_token: string | null): boolean {
@@ -111,6 +79,5 @@ export async function register(
     skipAuth: true,
   })
 
-  setToken(data.access_token)
   return data
 }
