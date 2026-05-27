@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../services/api'
-import { logout, setToken } from '../services/authService'
+import { logout } from '../services/authService'
 
 type MeProfile = { email: string; role: string; id?: number; legajo?: string | null }
 
@@ -29,13 +29,11 @@ export default function EmployeePortal() {
   const handleLogin = async () => {
     setError('')
     try {
-      const data = await apiFetch<{ access_token: string }>('/auth/login', {
+      await apiFetch<{ access_token: string }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         skipAuth: true,
       })
-
-      setToken(data.access_token)
 
       const me = await apiFetch<MeProfile>('/auth/me')
 
