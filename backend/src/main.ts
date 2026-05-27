@@ -4,6 +4,7 @@ import { ValidationPipe, Logger } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { seedAdmin } from './seed/seed-admin'
 import cookieParser from 'cookie-parser'
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter'
 
 function getCorsOrigins() {
   return (process.env.CORS_ORIGINS ?? '')
@@ -43,6 +44,7 @@ async function bootstrap() {
       transform: true,
     }),
   )
+  app.useGlobalFilters(new AllExceptionsFilter())
 
   if (shouldRunSeedAdmin()) {
     try {
