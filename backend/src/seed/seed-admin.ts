@@ -13,7 +13,7 @@ export async function seedAdmin(dataSource: DataSource) {
   const lastName = process.env.ADMIN_LASTNAME ?? 'Sistema'
   const birthDate = process.env.ADMIN_BIRTHDATE ?? '1990-01-01'
 
-  const country = (process.env.ADMIN_COUNTRY ?? 'AR').trim()
+  const country = (process.env.ADMIN_COUNTRY ?? 'AR').trim()  
   const province = (process.env.ADMIN_PROVINCE ?? 'Buenos Aires').trim()
   const city = (process.env.ADMIN_CITY ?? 'Roque Pérez').trim()
 
@@ -39,7 +39,7 @@ export async function seedAdmin(dataSource: DataSource) {
     birthDate: new Date(birthDate),
     email,
     password: hashed,
-    role: UserRole.ADMIN,
+    role: UserRole.SUPERADMIN,
     isActive: true,
     isVerified: true,
     country,

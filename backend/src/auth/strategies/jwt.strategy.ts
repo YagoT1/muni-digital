@@ -17,7 +17,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly usersService: UsersService,
   ) {
     const secret = configService.get<string>('JWT_SECRET')
-    if (!secret) throw new Error('JWT_SECRET is not set')
+
+    if (!secret) {
+      throw new Error('JWT_SECRET is not set')
+    }
 
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -31,11 +34,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: { sub?: number }) {
     const userId = payload?.sub
-    if (!userId) throw new UnauthorizedException('Invalid token payload')
+
+    if (!userId) {
+      throw new UnauthorizedException('Invalid token payload')
+    }
 
     const user = await this.usersService.findById(Number(userId))
-    if (!user) throw new UnauthorizedException('User not found')
-    if (user.isActive === false) throw new UnauthorizedException('User is inactive')
+
+    if (!user) {
+      throw new UnauthorizedException('User not found')
+    }
+
+    if (user.isActive === false) {
+      throw new UnauthorizedException('User is inactive')
+    }
 
     const base = {
       dni: user.dni,
@@ -45,8 +57,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       isActive: user.isActive,
     }
 
-    // Regla: solo admin visualiza ID en /auth/me
-    if (user.role === UserRole.ADMIN) {
+    if (
+      user.role === UserRole.ADMIN ||
+      user.role === UserRole.SUPERADMIN
+    ) {
       return { id: user.id, ...base }
     }
 

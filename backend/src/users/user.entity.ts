@@ -8,16 +8,20 @@ import {
 } from 'typeorm'
 
 export enum UserRole {
+  SUPERADMIN = 'superadmin',
   ADMIN = 'admin',
   OPERADOR = 'operador',
   CIUDADANO = 'ciudadano',
   EMPLEADO = 'empleado',
   MODERADOR = 'moderador',
+   
 }
 
 export enum Gender {
   MASCULINO = 'masculino',
   FEMENINO = 'femenino',
+  VARON_TRANS = 'varon_trans',
+  MUJER_TRANS = 'mujer_trans',
   NO_BINARIO = 'no_binario',
   PREFIERO_NO_DECIR = 'prefiero_no_decir',
 }

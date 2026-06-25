@@ -63,7 +63,7 @@ function validateEnv(env: EnvVars) {
             type: 'postgres',
             url: databaseUrl,
             autoLoadEntities: true,
-            synchronize: !isProd,
+            synchronize: true,
             logging: !isProd,
             ssl: isProd ? { rejectUnauthorized: false } : false,
           }
