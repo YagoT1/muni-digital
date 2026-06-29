@@ -51,12 +51,12 @@ const transparencyData = [
 ]
 
 const openDataLinks = [
-  { label: 'Presupuesto y Ejecución', href: '/transparencia' },
-  { label: 'Contrataciones', href: '/transparencia' },
-  { label: 'Obras Públicas', href: '/transparencia' },
-  { label: 'Personal y Salarios', href: '/transparencia' },
-  { label: 'Estadísticas', href: '/transparencia' },
-  { label: 'API de Datos', href: '/transparencia' },
+  { label: 'Presupuesto y Ejecución', href: '/modulo-en-desarrollo' },
+  { label: 'Contrataciones', href: '/modulo-en-desarrollo' },
+  { label: 'Obras Públicas', href: '/modulo-en-desarrollo' },
+  { label: 'Personal y Salarios', href: '/modulo-en-desarrollo' },
+  { label: 'Estadísticas', href: '/modulo-en-desarrollo' },
+  { label: 'API de Datos', href: '/modulo-en-desarrollo' },
 ]
 
 export function TransparencySection() {
@@ -121,11 +121,11 @@ export function TransparencySection() {
                 sobre presupuesto, obras, contrataciones y más en CSV, JSON o Excel.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Link to="/transparencia" className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-muni-700 hover:bg-white/90 gap-2">
+                <Link to="/modulo-en-desarrollo" className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-muni-700 hover:bg-white/90 gap-2">
                   <Download className="h-4 w-4" />
                   Descargar datos
                 </Link>
-                <Link to="/transparencia" className="inline-flex items-center rounded-md border border-white/30 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 gap-2">
+                <Link to="/modulo-en-desarrollo" className="inline-flex items-center rounded-md border border-white/30 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 gap-2">
                   <ExternalLink className="h-4 w-4" />
                   Ver API
                 </Link>
@@ -154,9 +154,9 @@ export function TransparencySection() {
             { icon: FileText, title: 'Resoluciones', desc: 'Actas y decretos', color: 'bg-blue-50 text-blue-600' },
             { icon: FileText, title: 'Licitaciones', desc: 'Procesos activos', color: 'bg-emerald-50 text-emerald-600' },
           ].map((doc) => (
-            <a
+            <Link
               key={doc.title}
-              href={`#${doc.title.toLowerCase()}`}
+              to="/modulo-en-desarrollo"
               className="group flex items-center gap-4 p-5 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-all duration-300"
             >
               <div className={`p-3 rounded-xl ${doc.color}`}>
@@ -167,7 +167,7 @@ export function TransparencySection() {
                 <p className="text-sm text-slate-500">{doc.desc}</p>
               </div>
               <ArrowRight className="h-5 w-5 text-slate-300 group-hover:text-muni-500 group-hover:translate-x-1 transition-all" />
-            </a>
+            </Link>
           ))}
         </div>
       </div>

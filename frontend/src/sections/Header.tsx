@@ -37,15 +37,15 @@ const navItems = [
     label: 'Servicios',
     href: '#servicios',
     children: [
-      { label: 'Salud', href: '#salud' },
-      { label: 'Educación', href: '#educacion' },
-      { label: 'Obras', href: '#obras' },
-      { label: 'Ambiente', href: '#ambiente' },
+      { label: 'Salud', href: '/modulo-en-desarrollo' },
+      { label: 'Educación', href: '/modulo-en-desarrollo' },
+      { label: 'Obras', href: '/modulo-en-desarrollo' },
+      { label: 'Ambiente', href: '/modulo-en-desarrollo' },
     ],
   },
   { label: 'Turismo', href: '/turismo' },
   { label: 'Transparencia', href: '/transparencia' },
-  { label: 'Contacto', href: '/eventos' },
+  { label: 'Contacto', href: '/modulo-en-desarrollo' },
 ]
 
 const searchSuggestions = [
@@ -146,6 +146,11 @@ export function Header() {
                   setShowSuggestions(e.target.value.length > 0)
                 }}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    navigate('/modulo-en-desarrollo')
+                  }
+                }}
               />
 
               {showSuggestions && searchQuery && (
@@ -158,6 +163,7 @@ export function Header() {
                         onClick={() => {
                           setSearchQuery(suggestion)
                           setShowSuggestions(false)
+                          navigate('/modulo-en-desarrollo')
                         }}
                       >
                         {suggestion}
@@ -245,6 +251,14 @@ export function Header() {
                 type="search"
                 placeholder="Buscar..."
                 className="pl-11 w-full rounded-xl bg-slate-50"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    setIsMobileMenuOpen(false)
+                    navigate('/modulo-en-desarrollo')
+                  }
+                }}
               />
             </div>
 

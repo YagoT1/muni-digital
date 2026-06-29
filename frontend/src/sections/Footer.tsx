@@ -20,24 +20,24 @@ const footerLinks = {
     { label: 'Pagos y Deudas', href: '/deudas' },
     { label: 'Guía de Trámites', href: '/tramites' },
     { label: 'Turnos Online', href: '/turnos' },
-    { label: 'Salud', href: '#salud' },
-    { label: 'Educación', href: '#educacion' },
-    { label: 'Obras', href: '#obras' },
+    { label: 'Salud', href: '/modulo-en-desarrollo' },
+    { label: 'Educación', href: '/modulo-en-desarrollo' },
+    { label: 'Obras', href: '/modulo-en-desarrollo' },
   ],
   municipalidad: [
-    { label: 'Autoridades', href: '#autoridades' },
-    { label: 'Organigrama', href: '#organigrama' },
+    { label: 'Autoridades', href: '/modulo-en-desarrollo' },
+    { label: 'Organigrama', href: '/modulo-en-desarrollo' },
     { label: 'Transparencia', href: '/transparencia' },
-    { label: 'Datos Abiertos', href: '#datos-abiertos' },
-    { label: 'Normativas', href: '#normativas' },
-    { label: 'Licitaciones', href: '#licitaciones' },
+    { label: 'Datos Abiertos', href: '/modulo-en-desarrollo' },
+    { label: 'Normativas', href: '/modulo-en-desarrollo' },
+    { label: 'Licitaciones', href: '/modulo-en-desarrollo' },
   ],
   comunidad: [
     { label: 'Turismo', href: '/turismo' },
     { label: 'Agenda Cultural', href: '/eventos' },
-    { label: 'Deportes', href: '#deportes' },
-    { label: 'Participación', href: '#participacion' },
-    { label: 'Voluntariado', href: '#voluntariado' },
+    { label: 'Deportes', href: '/modulo-en-desarrollo' },
+    { label: 'Participación', href: '/modulo-en-desarrollo' },
+    { label: 'Voluntariado', href: '/modulo-en-desarrollo' },
   ],
 }
 
@@ -177,13 +177,13 @@ export function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-500">
               <span>© 2026 Municipalidad de Roque Pérez</span>
               <span className="hidden md:inline">|</span>
-              <a href="#terminos" className="hover:text-slate-300 transition-colors">
+              <a href="/modulo-en-desarrollo" className="hover:text-slate-300 transition-colors">
                 Términos
               </a>
-              <a href="#privacidad" className="hover:text-slate-300 transition-colors">
+              <a href="/modulo-en-desarrollo" className="hover:text-slate-300 transition-colors">
                 Privacidad
               </a>
-              <a href="#accesibilidad" className="hover:text-slate-300 transition-colors">
+              <a href="/modulo-en-desarrollo" className="hover:text-slate-300 transition-colors">
                 Accesibilidad
               </a>
               </div>
