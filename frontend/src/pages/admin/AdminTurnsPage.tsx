@@ -1,4 +1,4 @@
-import ModuleInDevelopmentPage from '../../ModuleInDevelopmentPage'
+import ModuleInDevelopmentPage from '../ModuleInDevelopmentPage'
 
 export default function AdminTurnsPage() {
   return <ModuleInDevelopmentPage />
