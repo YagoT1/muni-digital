@@ -217,9 +217,9 @@ export default function PortalPage() {
                 </Button>
 
                 <div className="text-center text-[0.95rem]">
-                  <button type="button" className="text-blue-700 hover:text-blue-800 hover:underline">
+                  <Link to="/modulo-en-desarrollo" className="text-blue-700 hover:text-blue-800 hover:underline">
                     ¿Olvidaste tu contraseña?
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="pt-2">

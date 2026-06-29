@@ -1,44 +1,7 @@
 import { Calendar, ArrowRight, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
-const news = [
-  {
-    id: 1,
-    title: 'Comenzó la obra del nuevo SUM de la Comunidad',
-    excerpt: 'Se iniciaron los trabajos de construcción del nuevo Salón de Usos Múltiples que beneficiará a más de 500 familias del barrio.',
-    date: '13 de febrero, 2026',
-    category: 'Obras',
-    author: 'Prensa Municipal',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Continúan las mejoras edilicias en escuelas primarias',
-    excerpt: 'Se realizan trabajos de mantenimiento y refacción en establecimientos educativos de la zona urbana.',
-    date: '10 de febrero, 2026',
-    category: 'Educación',
-    author: 'Secretaría de Educación',
-    featured: false,
-  },
-  {
-    id: 3,
-    title: 'Más obras de infraestructura para educación',
-    excerpt: 'Nuevas aulas y espacios recreativos para los alumnos de las escuelas municipales.',
-    date: '5 de febrero, 2026',
-    category: 'Educación',
-    author: 'Prensa Municipal',
-    featured: false,
-  },
-  {
-    id: 4,
-    title: 'Exitosas noches de carnaval en Carlos Beguerie',
-    excerpt: 'Miles de vecinos disfrutaron de las tradicionales noches de carnaval en nuestra localidad.',
-    date: '8 de febrero, 2026',
-    category: 'Cultura',
-    author: 'Secretaría de Cultura',
-    featured: false,
-  },
-]
+import { publicNews } from '@/data/publicContent'
 
 const categoryColors: Record<string, string> = {
   'Obras': 'bg-amber-100 text-amber-700',
@@ -49,8 +12,8 @@ const categoryColors: Record<string, string> = {
 }
 
 export function NewsSection() {
-  const featuredNews = news.find(n => n.featured)
-  const otherNews = news.filter(n => !n.featured)
+  const featuredNews = publicNews.find(n => n.featured)
+  const otherNews = publicNews.filter(n => !n.featured)
 
   return (
     <section id="noticias" className="section-modern bg-white">
