@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 type DebtResult = { concept: string; amount: string; status: 'pendiente' | 'vencida' }
 
 export default function DebtsPage() {
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<DebtResult[] | null>(null)
 
@@ -31,7 +32,7 @@ export default function DebtsPage() {
           </div>
           <div className="text-right">
             <p className="font-bold">{item.amount}</p>
-            <Button size="sm" className="mt-2">Continuar pago</Button>
+            <Button size="sm" className="mt-2" onClick={() => navigate('/modulo-en-desarrollo')}>Continuar pago</Button>
           </div>
         </div>
       ))}

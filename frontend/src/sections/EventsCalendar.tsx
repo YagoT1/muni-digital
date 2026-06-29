@@ -45,7 +45,7 @@ export function EventsCalendar() {
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-semibold text-lg text-slate-900">Próximos eventos</h3>
-              <Button variant="outline" size="sm" className="gap-2"><Bell className="h-4 w-4" />Suscribirse</Button>
+              <Button asChild variant="outline" size="sm" className="gap-2"><Link to="/modulo-en-desarrollo"><Bell className="h-4 w-4" />Suscribirse</Link></Button>
             </div>
 
             <div className="space-y-4">
