@@ -25,6 +25,7 @@ import TourismPage from './pages/TourismPage'
 import NewsPage from './pages/NewsPage'
 import NewsDetailPage from './pages/NewsDetailPage'
 import EventsPage from './pages/EventsPage'
+import ModuleInDevelopmentPage from './pages/ModuleInDevelopmentPage'
 import CitizenPortalPage from './pages/CitizenPortalPage'
 import CitizenProfilePage from './pages/CitizenProfilePage'
 import CitizenTurnsPage from './pages/CitizenTurnsPage'
@@ -116,6 +117,7 @@ function App() {
       <Route path="/noticias" element={<NewsPage />} />
       <Route path="/noticias/:id" element={<NewsDetailPage />} />
       <Route path="/eventos" element={<EventsPage />} />
+      <Route path="/modulo-en-desarrollo" element={<ModuleInDevelopmentPage />} />
 
       <Route element={<ProtectedRoute allowedRoles={['ciudadano']} />}>
         <Route path="/ciudadano" element={<CitizenLayout />}>
